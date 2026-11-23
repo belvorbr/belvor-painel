@@ -55,6 +55,8 @@
     onData: (cb) => { ouvintes.push(cb); },
     setLink: (nome) => { history.replaceState(null, '', '#' + nome); },
     redesenhar: agenda,
+    // só para conferir o visual sem login: injeta dados locais neste navegador (não lê nada do banco)
+    _injetar: (id, rows) => { const r = loaders[id] ? loaders[id]({ answer: '<untrusted-data-x>\n' + JSON.stringify(rows) + '\n</untrusted-data-x>' }) : rows; dados[id] = { status: 'ok', data: r }; permitidos = permitidos || new Set(); versao++; agenda(); },
   };
 
   async function carregar() {
