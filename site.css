@@ -1,0 +1,42 @@
+[hidden] { display: none !important; }
+.bv-sem-acesso { display: none !important; }
+:root {
+  --color-fg: #161616; --color-fg-muted: #6b6b6b; --color-bg: #f6f4f0; --color-panel: #ffffff; --color-border-line: #e2ded7;
+  --color-ok: #15623F; --color-bad: #760C0C; --color-warn: #B7791F;
+  --cds-font-size-caption: 12px; --cds-font-size-body: 14px; --cds-font-size-heading: 18px; --cds-font-size-title: 28px; --cds-font-weight-medium: 600;
+  --cds-radius: 12px; --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 12px; --cds-gap-lg: 16px; --cds-gap-xl: 24px;
+  --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 16px;
+  --cds-chart-grid: #ece8e1; --cds-chart-axis: #bdb7ad; --cds-text-secondary: #6b6b6b; --cds-border: #e2ded7;
+  --cds-surface-popover: #ffffff; --cds-shadow-popover: 0 8px 24px rgba(0, 0, 0, .12);
+  --cds-ease-out: cubic-bezier(.2, .8, .2, 1); --cds-dur-slow: .4s;
+  --font-anthropic-sans: 'Libre Franklin', system-ui, sans-serif; --font-anthropic-serif: 'Gloock', Georgia, serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: 14px; }
+#painel { max-width: 1240px; margin: 0 auto; padding: 16px 16px 60px; }
+.dash-select, .bv-input { font: inherit; font-size: 13px; padding: 6px 10px; border: 1px solid var(--color-border-line); border-radius: 8px; background: #fff; color: var(--color-fg); }
+.dash-skeleton { color: transparent !important; background: linear-gradient(90deg, #eee, #f6f6f6, #eee); border-radius: 6px; min-width: 4ch; }
+.bv-conta { display: flex; justify-content: flex-end; align-items: center; gap: 12px; font-size: 12px; color: var(--color-fg-muted); margin-bottom: 10px; flex-wrap: wrap; }
+.bv-conta .papeis { font-family: 'Lexend Peta', sans-serif; text-transform: uppercase; letter-spacing: .12em; font-size: 10px; }
+.bv-link { font: inherit; background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; cursor: pointer; }
+.bv-subtabs { display: flex; gap: 6px; margin: -6px 0 16px; flex-wrap: wrap; }
+.bv-subtab { appearance: none; border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); border-radius: 999px; padding: 6px 14px; font-family: 'Lexend Peta', sans-serif; text-transform: uppercase; letter-spacing: .1em; font-size: 10.5px; cursor: pointer; }
+.bv-subtab[aria-selected="true"] { background: var(--color-fg); color: #fff; border-color: var(--color-fg); }
+.bv-campo { display: flex; flex-direction: column; gap: 6px; font-size: 13px; margin-bottom: 12px; max-width: 420px; }
+.bv-checks { display: flex; flex-wrap: wrap; gap: 12px; margin: 6px 0 12px; font-size: 13px; }
+.bv-botao { font: inherit; font-weight: 600; background: #0a0a0a; color: #fff; border: 0; border-radius: 999px; padding: 10px 20px; cursor: pointer; margin-top: 8px; }
+
+/* login */
+.topo { background: #0a0a0a; color: #fff; display: flex; align-items: center; gap: 12px; padding: 14px clamp(16px, 4vw, 40px); }
+.topo .simbolo { height: 44px; } .topo .logo { height: 30px; }
+body.logado .topo { display: none; }
+.cartao { background: #fff; border: 1px solid var(--color-border-line); border-radius: 12px; padding: 24px; }
+.estreito { max-width: 420px; margin: 40px auto; }
+.cartao h1 { font-family: 'Gloock', Georgia, serif; font-weight: 400; font-size: 30px; margin: 0 0 16px; }
+.cartao label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; margin-bottom: 12px; }
+.cartao input { font: inherit; padding: 10px 12px; border: 1px solid var(--color-border-line); border-radius: 8px; }
+.botao { font: inherit; font-weight: 600; background: #0a0a0a; color: #fff; border: 0; border-radius: 999px; padding: 11px 20px; cursor: pointer; }
+.link { font: inherit; background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; cursor: pointer; font-size: 13px; }
+.links { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.msg { min-height: 1.4em; font-size: 13px; } .msg.erro { color: var(--color-bad); } .msg.ok { color: var(--color-ok); }
+.nota { color: var(--color-fg-muted); font-size: 13px; line-height: 1.5; }

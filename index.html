@@ -7,74 +7,705 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Lexend+Peta:wght@400;500&family=Libre+Franklin:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="brand-fonts.css?v=202611231300">
+<link rel="stylesheet" href="painel.css?v=202611231300">
+<link rel="stylesheet" href="site.css?v=202611231300">
 </head>
 <body>
-<header class="topo">
-  <div class="marca"><img src="simbolo-branco.png" alt="" class="simbolo"><img src="logo-branco.svg" alt="Bëlvor" class="logo"></div>
-  <div class="quem" id="quem" hidden><span id="quem-nome"></span><span id="quem-papeis" class="papeis"></span><button type="button" id="sair" class="link">Sair</button></div>
-</header>
+<header class="topo"><img src="simbolo-branco.png" alt="" class="simbolo"><img src="logo-branco.svg" alt="Bëlvor" class="logo"></header>
 
-<main id="app">
-  <!-- Login -->
-  <section id="tela-login" class="cartao estreito" hidden>
-    <h1>Entrar no painel</h1>
-    <form id="form-login">
-      <label>E-mail<input type="email" id="login-email" autocomplete="username" required></label>
-      <label>Senha<input type="password" id="login-senha" autocomplete="current-password" required></label>
-      <button type="submit" class="botao">Entrar</button>
-    </form>
-    <p class="msg" id="login-msg" role="status"></p>
-    <div class="links">
-      <button type="button" class="link" id="ir-cadastro">Primeiro acesso: criar minha senha</button>
-      <button type="button" class="link" id="ir-esqueci">Esqueci a senha</button>
+<section id="tela-login" class="cartao estreito" hidden>
+  <h1>Entrar no painel</h1>
+  <form id="form-login">
+    <label>E-mail<input type="email" id="login-email" autocomplete="username" required></label>
+    <label>Senha<input type="password" id="login-senha" autocomplete="current-password" required></label>
+    <button type="submit" class="botao">Entrar</button>
+  </form>
+  <p class="msg" id="login-msg" role="status"></p>
+  <div class="links">
+    <button type="button" class="link" id="ir-cadastro">Primeiro acesso: criar minha senha</button>
+    <button type="button" class="link" id="ir-esqueci">Esqueci a senha</button>
+  </div>
+</section>
+<section id="tela-cadastro" class="cartao estreito" hidden>
+  <h1>Primeiro acesso</h1>
+  <p class="nota">Use o e-mail que o administrador cadastrou. Você vai receber um e-mail para confirmar.</p>
+  <form id="form-cadastro">
+    <label>E-mail<input type="email" id="cad-email" autocomplete="username" required></label>
+    <label>Crie uma senha (mínimo 8 caracteres)<input type="password" id="cad-senha" autocomplete="new-password" minlength="8" required></label>
+    <button type="submit" class="botao">Criar acesso</button>
+  </form>
+  <p class="msg" id="cad-msg" role="status"></p>
+  <button type="button" class="link volta">← Voltar</button>
+</section>
+<section id="tela-esqueci" class="cartao estreito" hidden>
+  <h1>Esqueci a senha</h1>
+  <form id="form-esqueci">
+    <label>E-mail<input type="email" id="esq-email" autocomplete="username" required></label>
+    <button type="submit" class="botao">Enviar link</button>
+  </form>
+  <p class="msg" id="esq-msg" role="status"></p>
+  <button type="button" class="link volta">← Voltar</button>
+</section>
+<section id="tela-nova-senha" class="cartao estreito" hidden>
+  <h1>Nova senha</h1>
+  <form id="form-nova">
+    <label>Nova senha (mínimo 8 caracteres)<input type="password" id="nova-senha" autocomplete="new-password" minlength="8" required></label>
+    <button type="submit" class="botao">Salvar</button>
+  </form>
+  <p class="msg" id="nova-msg" role="status"></p>
+</section>
+<section id="tela-sem-acesso" class="cartao estreito" hidden>
+  <h1>Sem acesso ainda</h1>
+  <p>Seu login funcionou, mas este e-mail ainda não tem um perfil no painel. Peça a um administrador para liberar.</p>
+  <button type="button" class="link" data-sair>Sair</button>
+</section>
+
+<div id="painel" hidden>
+  <div class="bv-conta"><span data-quem-nome></span><span class="papeis" data-quem-papeis></span><button type="button" class="bv-link" data-sair>Sair</button></div>
+
+<div class="bv" lang="pt-BR">
+  <header class="bv-head bv-hero" id="topo">
+    <div class="bv-hero-topo"><span class="bv-marca-grupo"><img class="bv-simbolo" src="simbolo-branco.svg" alt="" aria-hidden="true"><span class="bv-marca bv-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="106 106 296 86" role="img" aria-label="Bëlvor"><g fill="currentColor"><path d="M 145.566406 186.800781 L 110 186.800781 L 110 185.175781 C 113.46875 185.175781 115.421875 180.726562 115.640625 174.546875 L 115.640625 123.125 C 115.421875 117.050781 113.46875 112.601562 110 112.601562 L 110 110.867188 L 142.097656 110.867188 C 169.746094 110.867188 172.242188 141.351562 149.6875 146.882812 C 175.929688 150.355469 174.523438 186.804688 145.566406 186.804688 Z M 128.109375 114.335938 L 128.109375 145.472656 L 138.085938 145.472656 C 155.328125 145.472656 156.953125 114.335938 138.085938 114.335938 Z M 142.097656 148.835938 L 128.109375 148.835938 L 128.109375 183.4375 L 142.097656 183.4375 C 158.6875 183.4375 160.316406 148.835938 142.097656 148.835938 Z M 142.097656 148.835938 "/><path d="M 186.78125 150.570312 C 186.351562 153.175781 186.023438 156.214844 186.023438 159.574219 C 186.023438 175.089844 195.023438 181.597656 203.699219 181.597656 C 209.339844 181.597656 214.867188 178.777344 217.578125 174.003906 L 218.878906 174.871094 C 215.410156 183.65625 207.167969 188.105469 198.601562 188.105469 C 186.351562 188.105469 173.554688 178.882812 173.554688 159.574219 C 173.554688 140.265625 187 131.261719 199.363281 131.261719 C 209.339844 131.261719 218.558594 137.011719 219.101562 147.644531 L 219.101562 150.570312 Z M 184.304688 119.359375 C 184.015625 115.125 187.742188 111.601562 192.027344 112.246094 C 195.019531 112.695312 197.375 115.15625 197.695312 118.167969 C 198.144531 122.371094 194.644531 125.808594 190.480469 125.492188 C 187.207031 125.242188 184.527344 122.632812 184.304688 119.359375 Z M 198.496094 134.625 C 194.265625 134.625 189.714844 138.53125 187.433594 147.101562 L 203.003906 147.101562 C 205.5 147.101562 207.339844 144.71875 206.664062 142.316406 C 205.261719 137.328125 202.042969 134.625 198.492188 134.625 Z M 202.742188 119.359375 C 202.449219 115.125 206.175781 111.601562 210.460938 112.246094 C 213.453125 112.695312 215.8125 115.15625 216.128906 118.167969 C 216.578125 122.371094 213.078125 125.808594 208.914062 125.492188 C 205.640625 125.242188 202.964844 122.632812 202.742188 119.359375 Z M 202.742188 119.359375 "/><path d="M 245.273438 185.175781 L 245.273438 186.800781 L 222.175781 186.800781 L 222.175781 185.175781 C 225.648438 185.175781 227.597656 180.726562 227.816406 174.546875 L 227.816406 129.527344 C 227.597656 123.453125 225.648438 119.003906 222.175781 119.003906 L 222.175781 117.269531 L 238.007812 110 L 239.742188 110 L 239.742188 174.109375 C 239.847656 180.402344 241.695312 185.175781 245.269531 185.175781 Z M 245.273438 185.175781 "/><path d="M 255.859375 145.582031 L 255.75 145.582031 C 252.929688 138.421875 249.246094 133.972656 245.558594 133.972656 L 245.558594 132.347656 L 269.089844 132.347656 L 269.089844 133.972656 C 265.730469 133.972656 265.730469 137.554688 268.007812 143.953125 L 280.910156 176.171875 L 292.621094 145.582031 C 295.765625 137.335938 289.585938 134.082031 285.898438 134.082031 L 285.898438 132.347656 L 305.636719 132.347656 L 305.636719 134.082031 C 301.945312 134.082031 298.914062 138.855469 296.308594 145.582031 L 280.65625 186.800781 L 272.363281 186.800781 Z M 255.859375 145.582031 "/><path d="M 330.308594 131.152344 C 317.1875 131.152344 304.066406 140.699219 304.066406 159.574219 C 304.066406 178.449219 317.1875 187.890625 330.199219 187.890625 C 343.210938 187.890625 356.121094 178.449219 356.121094 159.574219 C 356.121094 140.699219 343.214844 131.152344 330.308594 131.152344 Z M 333.8125 184.136719 C 327.164062 185.140625 319.160156 177.902344 316.699219 161.601562 C 314.21875 145.191406 319.621094 135.925781 326.375 134.90625 C 333.023438 133.898438 341.027344 141.136719 343.503906 157.550781 C 345.984375 173.960938 340.566406 183.117188 333.8125 184.136719 Z M 333.8125 184.136719 "/><path d="M 378.246094 173.800781 C 378.355469 180.246094 380.246094 185.136719 383.910156 185.136719 L 383.910156 186.800781 L 360.25 186.800781 L 360.25 185.136719 C 363.804688 185.136719 365.804688 180.582031 366.023438 174.246094 L 366.023438 151.019531 C 365.800781 144.796875 363.804688 140.128906 360.25 140.128906 L 360.25 138.460938 L 376.46875 131.015625 L 378.242188 131.015625 L 378.242188 148.019531 C 380.796875 138.796875 387.464844 129.90625 398.015625 129.90625 L 398.015625 142.351562 C 385.242188 142.351562 378.242188 148.242188 378.242188 156.800781 L 378.242188 173.800781 Z M 378.246094 173.800781 "/></g></svg></span></span><span class="bv-tagline">Onde prazer e disciplina coexistem</span></div>
+    <h1 class="bv-title">Painel financeiro</h1>
+    <p class="bv-lead" id="resumo" data-read lang="pt-BR">Em <b data-draw="lead-mes">—</b> a Bëlvor faturou <b data-draw="lead-fat">—</b> em <b data-draw="lead-ped">—</b> pedidos, com resultado de <b data-draw="lead-res">—</b> na DRE do mês. Nos próximos 30 dias estão previstos <b data-draw="lead-rec">—</b> a receber e <b data-draw="lead-pag">—</b> a pagar.</p>
+    <p class="bv-meta">Dados do Bling, sincronizados em <span data-draw="sync">—</span>.</p>
+  </header>
+
+  <nav class="bv-tabs" role="tablist" aria-label="Seções do painel">
+    <button class="bv-tab" role="tab" data-tab="central" data-papeis="admin,financeiro,visao,performance,influencia,comercial" aria-selected="true">Central</button>
+    <button class="bv-tab" role="tab" data-tab="metas" data-papeis="admin,financeiro,visao,performance,influencia,comercial" aria-selected="false">Metas</button>
+    <button class="bv-tab" role="tab" data-tab="financeiro" data-papeis="admin,financeiro" aria-selected="false">Financeiro</button>
+    <button class="bv-tab" role="tab" data-tab="setores" data-papeis="admin,financeiro,visao,comercial" aria-selected="false">Setores</button>
+    <button class="bv-tab" role="tab" data-tab="marketing" data-papeis="admin,financeiro,visao,performance,influencia" aria-selected="false">Marketing</button>
+    <button class="bv-tab" role="tab" data-tab="usuarios" data-papeis="admin" aria-selected="false">Usuários</button>
+  </nav>
+  <nav class="bv-subtabs" id="bv-subtabs" aria-label="Financeiro" hidden>
+    <button class="bv-subtab" type="button" data-sub="dre">DRE</button>
+    <button class="bv-subtab" type="button" data-sub="cpv">CPV</button>
+    <button class="bv-subtab" type="button" data-sub="caixa">Fluxo de caixa</button>
+  </nav>
+
+  <!-- ============ CENTRAL ============ -->
+  <section class="bv-sec" id="central" data-sec="central" hidden>
+    <div class="bv-row">
+      <div class="bv-central-tit">
+        <span class="bv-eyebrow">Central de performance</span>
+        <h2 class="bv-h2">O pulso do negócio</h2>
+        <p class="bv-note" data-draw="pulso-periodo-txt"></p>
+      </div>
+      <div class="bv-ctrls">
+        <label for="ctl-perf-periodo">Período
+          <select class="dash-select" id="ctl-perf-periodo" data-param="perf_periodo">
+            <option value="mes">Mês atual</option>
+            <option value="7d">Últimos 7 dias</option>
+            <option value="30d">Últimos 30 dias</option>
+            <option value="90d">Últimos 90 dias</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="bv-pulso">
+      <div class="bv-pkpi" id="pulso-faturamento"><span class="bv-eyebrow">Faturamento</span><div data-draw="pulso-kpi" data-kpi="fat"></div></div>
+      <div class="bv-pkpi" id="pulso-pedidos"><span class="bv-eyebrow">Pedidos</span><div data-draw="pulso-kpi" data-kpi="pedidos"></div></div>
+      <div class="bv-pkpi" id="pulso-ticket"><span class="bv-eyebrow">Ticket médio</span><div data-draw="pulso-kpi" data-kpi="ticket"></div></div>
+      <div class="bv-pkpi" id="pulso-investimento"><span class="bv-eyebrow">Investimento Meta</span><div data-draw="pulso-kpi" data-kpi="invest"></div></div>
+      <div class="bv-pkpi" id="pulso-roas"><span class="bv-eyebrow">ROAS Meta</span><div data-draw="pulso-kpi" data-kpi="roas"></div></div>
+      <div class="bv-pkpi" id="pulso-cpa"><span class="bv-eyebrow">Custo por compra</span><div data-draw="pulso-kpi" data-kpi="cpa"></div></div>
+    </div>
+
+    <div class="bv-card" id="faturamento-diario">
+      <div class="bv-row">
+        <span class="bv-eyebrow">Faturamento diário × cota da meta</span>
+        <ul class="bv-legend">
+          <li><span class="bv-sw" style="background: var(--bv-pdv)"></span>PDV</li>
+          <li><span class="bv-sw" style="background: var(--bv-ecom)"></span>Site</li>
+          <li><span class="bv-sw" style="background: var(--bv-org)"></span>Venda orgânica</li>
+          <li><span class="bv-sw bv-ref"></span>Cota diária da meta</li>
+        </ul>
+      </div>
+      <div class="bv-chart" data-draw="pulso-fat-dia" data-source="serie_dia"></div>
+    </div>
+
+    <div class="bv-grid2">
+      <div class="bv-card" id="pedidos-dia">
+        <span class="bv-eyebrow">Pedidos por dia</span>
+        <div class="bv-chart bv-chart-sm" data-draw="pulso-ped-dia" data-source="serie_dia"></div>
+      </div>
+      <div class="bv-card" id="meta-dia">
+        <div class="bv-row">
+          <span class="bv-eyebrow">Meta Ads por dia</span>
+          <ul class="bv-legend">
+            <li><span class="bv-sw" style="background: var(--bv-perf)"></span>Investimento</li>
+            <li><span class="bv-sw bv-line"></span>Receita atribuída</li>
+          </ul>
+        </div>
+        <div class="bv-chart bv-chart-sm" data-draw="pulso-meta-dia" data-source="serie_dia"></div>
+      </div>
+    </div>
+
+    <div class="bv-card" id="composicao">
+      <span class="bv-eyebrow">Como o faturamento é formado</span>
+      <div data-draw="pulso-composicao"></div>
+      <p class="bv-note">Performance = receita atribuída pelo Meta (compras até 7 dias após o clique ou 1 dia após a visualização). MKT influência = venda do site − performance. Venda orgânica = venda direta. Bonificações não contam.</p>
+    </div>
+
+    <div class="bv-card" id="campanhas">
+      <span class="bv-eyebrow">Campanhas em destaque · Meta Ads</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="pulso-campanhas" data-source="campanhas_periodo" data-row-key="periodo,campanha"></table>
+      </div>
+      <p class="bv-note">ROAS = receita atribuída ÷ investimento, segundo a atribuição do Meta. A meta de ROAS é 2×.</p>
+    </div>
+
+    <div class="bv-card" id="skus">
+      <span class="bv-eyebrow">Produtos mais vendidos</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="pulso-skus" data-source="skus_periodo" data-row-key="periodo,produto"></table>
+      </div>
+      <p class="bv-note">Vendas dos itens dos pedidos (PDV, site e venda orgânica), sem bonificações e sem frete. Unidades = cookies e brownies: caixa ou display de 12 conta 12.</p>
     </div>
   </section>
 
-  <section id="tela-cadastro" class="cartao estreito" hidden>
-    <h1>Primeiro acesso</h1>
-    <p class="nota">Use o e-mail que o administrador cadastrou. Você vai receber um e-mail para confirmar.</p>
-    <form id="form-cadastro">
-      <label>E-mail<input type="email" id="cad-email" autocomplete="username" required></label>
-      <label>Crie uma senha (mínimo 8 caracteres)<input type="password" id="cad-senha" autocomplete="new-password" minlength="8" required></label>
-      <button type="submit" class="botao">Criar acesso</button>
-    </form>
-    <p class="msg" id="cad-msg" role="status"></p>
-    <button type="button" class="link volta">← Voltar</button>
+  <!-- ============ METAS ============ -->
+  <section class="bv-sec" id="metas" data-sec="metas" hidden>
+    <div class="bv-row">
+      <span class="bv-eyebrow">Placar de metas</span>
+      <div class="bv-ctrls">
+        <label for="ctl-metas-mes">Mês
+          <select class="dash-select" id="ctl-metas-mes" data-draw="metas-meses" data-param="metas_mes"></select>
+        </label>
+      </div>
+    </div>
+
+    <div class="bv-placar bv-moldura" id="placar">
+      <div class="bv-placar-topo">
+        <span class="bv-eyebrow bv-eyebrow-inv">Meta geral · <span data-draw="placar-mes">—</span></span>
+        <span class="bv-nivel" data-draw="placar-nivel"></span>
+      </div>
+      <div class="bv-placar-num">
+        <span class="bv-placar-val" data-draw="placar-total">—</span>
+        <span class="bv-placar-de" data-draw="placar-meta"></span>
+      </div>
+      <div class="bv-trilha" data-draw="placar-trilha" role="img" aria-label="Progresso da meta geral do mês"></div>
+      <div class="bv-placar-stats" data-draw="placar-stats"></div>
+    </div>
+
+    <div class="bv-areas">
+      <article class="bv-area bv-moldura bv-area-link" id="area-pdv" style="--area: var(--bv-pdv)" tabindex="0" role="button" aria-label="Abrir análise de PDV">
+        <header class="bv-area-topo"><span class="bv-eyebrow">PDV</span><span class="bv-area-sub">pontos de venda</span></header>
+        <div class="bv-area-corpo" data-draw="area" data-area="pdv"></div>
+        <span class="bv-area-ver">Ver análise →</span>
+      </article>
+      <article class="bv-area bv-moldura bv-area-link" id="area-organica" style="--area: var(--bv-org)" tabindex="0" role="button" aria-label="Abrir análise de Venda orgânica">
+        <header class="bv-area-topo"><span class="bv-eyebrow">Venda orgânica</span><span class="bv-area-sub">venda direta, soma no ecommerce</span></header>
+        <div class="bv-area-corpo" data-draw="area" data-area="organica"></div>
+        <span class="bv-area-ver">Ver análise →</span>
+      </article>
+      <article class="bv-area bv-moldura bv-area-link" id="area-performance" style="--area: var(--bv-perf)" tabindex="0" role="button" aria-label="Abrir análise de Performance">
+        <header class="bv-area-topo"><span class="bv-eyebrow">Performance</span><span class="bv-area-sub">Meta Ads · meta = FACE × 2</span></header>
+        <div class="bv-area-corpo" data-draw="area" data-area="performance"></div>
+        <span class="bv-area-ver">Ver análise →</span>
+      </article>
+      <article class="bv-area bv-moldura bv-area-link" id="area-influencia" style="--area: var(--bv-infl)" tabindex="0" role="button" aria-label="Abrir análise de MKT influência">
+        <header class="bv-area-topo"><span class="bv-eyebrow">MKT influência</span><span class="bv-area-sub">o restante do site</span></header>
+        <div class="bv-area-corpo" data-draw="area" data-area="influencia"></div>
+        <span class="bv-area-ver">Ver análise →</span>
+      </article>
+    </div>
+
+    <div class="bv-grid2">
+      <div class="bv-card" id="composicao-ecommerce">
+        <span class="bv-eyebrow">Como o ecommerce chega na meta</span>
+        <div class="bv-compo" data-draw="ecom-composicao"></div>
+        <p class="bv-note">Ecommerce = venda orgânica + performance + MKT influência. A meta de performance é 2 × o maior valor entre o que já foi pago ao Facebook e o investimento planejado. O que a venda orgânica traz reduz o que fica para a influência. Até a API do Meta estar ligada, performance e influência aparecem juntas.</p>
+      </div>
+      <div class="bv-card" id="ranking-areas">
+        <span class="bv-eyebrow">Ranking do mês</span>
+        <ol class="bv-ranking" data-draw="ranking"></ol>
+        <p class="bv-note">Áreas com meta, ordenadas pelo % atingido. Níveis: Largada (até 25%), Movimento, Ascensão, Reta final (75–99%), Conquista (100–119%) e Soberania (120% ou mais).</p>
+      </div>
+    </div>
+
+    <div class="bv-card" id="dias-no-ritmo">
+      <div class="bv-row">
+        <span class="bv-eyebrow">Dias no ritmo</span>
+        <ul class="bv-legend">
+          <li><span class="bv-dia bv-dia-ok"></span>Vendeu a cota do dia</li>
+          <li><span class="bv-dia bv-dia-meio"></span>Metade da cota ou mais</li>
+          <li><span class="bv-dia bv-dia-baixo"></span>Abaixo da metade</li>
+          <li><span class="bv-dia bv-dia-hoje"></span>Hoje</li>
+        </ul>
+      </div>
+      <div class="bv-streaks" data-draw="dias-ritmo"></div>
+      <p class="bv-note">Cota do dia = meta do mês ÷ dias do mês. Cada quadrado é um dia; passe o cursor para ver o valor vendido.</p>
+    </div>
+
+    <div class="bv-card" id="ritmo">
+      <div class="bv-row">
+        <span class="bv-eyebrow">Venda acumulada × caminho da meta</span>
+        <ul class="bv-legend">
+          <li><span class="bv-sw" data-c="0"></span>Venda acumulada</li>
+          <li><span class="bv-sw bv-line"></span>Projeção no ritmo atual</li>
+          <li><span class="bv-sw bv-ref"></span>Caminho até a meta</li>
+        </ul>
+      </div>
+      <div class="bv-grid3">
+        <div><h4 class="bv-h4">Meta geral</h4><div class="bv-chart bv-chart-sm" data-draw="ritmo-total" data-source="vendas_dia"></div></div>
+        <div><h4 class="bv-h4">PDV</h4><div class="bv-chart bv-chart-sm" data-draw="ritmo-pdv" data-source="vendas_dia"></div></div>
+        <div><h4 class="bv-h4">Ecommerce</h4><div class="bv-chart bv-chart-sm" data-draw="ritmo-ecommerce" data-source="vendas_dia"></div></div>
+      </div>
+    </div>
+
+    <div class="bv-card" id="historico-metas">
+      <span class="bv-eyebrow">Histórico de metas</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-metas" data-source="placar" data-row-key="mes,area"></table>
+      </div>
+      <p class="bv-note">Metas ficam na tabela <code>metas_canais</code> do Supabase: <code>pdv</code> e <code>site</code> (meta total do ecommerce) com <code>meta_receita</code>; <code>site_performance</code> com <code>meta_roas</code> (padrão 2) e <code>meta_investimento</code>. Venda orgânica = loja "Vendas orgânicas" do Bling + pedidos sem loja. MKT influência = site Shopify − receita do Meta. Bonificações não contam.</p>
+    </div>
   </section>
 
-  <section id="tela-esqueci" class="cartao estreito" hidden>
-    <h1>Esqueci a senha</h1>
-    <form id="form-esqueci">
-      <label>E-mail<input type="email" id="esq-email" autocomplete="username" required></label>
-      <button type="submit" class="botao">Enviar link</button>
-    </form>
-    <p class="msg" id="esq-msg" role="status"></p>
-    <button type="button" class="link volta">← Voltar</button>
+  <!-- ============ DRE ============ -->
+  <section class="bv-sec" id="dre" data-sec="dre" hidden>
+    <div class="bv-row">
+      <div class="bv-central-tit"><h2 class="bv-h2">DRE global</h2><p class="bv-note" data-draw="dre-visao-txt"></p></div>
+      <div class="bv-ctrls">
+        <label for="ctl-dre-visao">Visão
+          <select class="dash-select" id="ctl-dre-visao" data-param="dre_visao">
+            <option value="competencia">Competência</option>
+            <option value="caixa">Caixa</option>
+          </select>
+        </label>
+        <label for="ctl-dre-meses">Mostrar
+          <select class="dash-select" id="ctl-dre-meses" data-param="dre_meses">
+            <option value="3">Últimos 3 meses</option>
+            <option value="6">Últimos 6 meses</option>
+            <option value="12">Últimos 12 meses</option>
+            <option value="todos">Todos os meses</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="bv-card">
+      <div class="bv-tw">
+        <table class="bv-table" id="tabela-dre" data-draw="dre-table" data-source="dre_tabela" data-row-key="codigo"></table>
+      </div>
+      <p class="bv-note">Colunas em itálico são meses futuros: mostram só despesas já lançadas. O total geral soma todos os meses, inclusive os que não estão na tela.</p>
+    </div>
+    <div class="bv-card" id="dre-legenda">
+      <span class="bv-eyebrow">O que entra em cada linha</span>
+      <p class="bv-note">Passe o cursor (ou toque) no ⓘ ao lado de cada linha da tabela para ver este texto ali mesmo. As categorias listadas vêm do Bling e da tabela <code>dre_mapa</code> do Supabase: para mover uma categoria de linha, edite a coluna <code>linha</code> lá.</p>
+      <dl class="bv-defs">
+        <div class="bv-def"><dt>Receita bruta (pedidos)</dt><dd data-linha-def="receita_bruta">Soma dos pedidos de venda do Bling no mês da venda: Shopify, PDV, Vendas orgânicas e pedidos sem loja. Ficam fora os cancelados e as bonificações da loja Marketing. Inclui o frete cobrado no pedido.</dd></div>
+        <div class="bv-def"><dt>(−) Simples Nacional (DAS)</dt><dd data-linha-def="das">Imposto único do Simples Nacional (inclui IRPJ, CSLL, PIS, COFINS, ICMS, IPI e INSS patronal), sobre a receita bruta do mês. Usa o DAS real lançado no Bling na categoria "Impostos sobre vendas"; nos meses sem lançamento, estima receita × alíquota da tabela parametros (hoje 4,5%, Anexo II, 1ª faixa). Na visão de caixa, o DAS estimado cai no mês seguinte, quando vence (dia 20). <span class="bv-def-cats" data-draw="dre-cats" data-linha="das"></span></dd></div>
+        <div class="bv-def"><dt>(−) Devoluções e descontos</dt><dd data-linha-def="deducoes">Devoluções de vendas e descontos incondicionais lançados no contas a pagar. <span class="bv-def-cats" data-draw="dre-cats" data-linha="deducoes"></span></dd></div>
+        <div class="bv-def"><dt>Receita líquida</dt><dd data-linha-def="receita_liquida">Receita bruta menos DAS, devoluções e descontos.</dd></div>
+        <div class="bv-def"><dt>(−) CMV</dt><dd data-linha-def="cmv">Custo do produto vendido: unidades vendidas no mês (contadas nos itens de cada pedido; caixa ou display de 12 conta 12) × CPV do formato vendido: display sai pelo CPV de PDV (fábrica + display + caixa master), caixa pelo CPV de e-commerce (fábrica + caixa de envio) e unidade avulsa pelo CPV de fábrica (insumos consumidos, industrialização, embalagem primária, frete de insumos e formas amortizadas, ÷ unidades produzidas). Detalhes na aba CPV. Não usa as compras do mês, que vão para estoque.</dd></div>
+        <div class="bv-def"><dt>Lucro bruto</dt><dd data-linha-def="lucro_bruto">Receita líquida menos CMV.</dd></div>
+        <div class="bv-def"><dt>(−) Despesas variáveis de venda</dt><dd data-linha-def="variaveis">Custos que crescem com cada pedido: frete de envio ao cliente, fee variável de logística, gateway, comissões e taxas de marketplace. A parte de frete e logística rateada para as bonificações sai daqui e vai para a linha de bonificações. <span class="bv-def-cats" data-draw="dre-cats" data-linha="variaveis"></span></dd></div>
+        <div class="bv-def"><dt>Margem de contribuição</dt><dd data-linha-def="margem_contribuicao">Lucro bruto menos despesas variáveis: quanto cada venda deixa para pagar marketing e estrutura.</dd></div>
+        <div class="bv-def"><dt>(−) Marketing</dt><dd data-linha-def="marketing">Contas a pagar de marketing, incluindo as faturas do Facebook (Meta Ads) lançadas no Bling, conteúdo, branding, influenciadores, eventos e brindes. Atenção: o gasto real no Meta (API) tem sido maior que as faturas lançadas. <span class="bv-def-cats" data-draw="dre-cats" data-linha="marketing"></span></dd></div>
+        <div class="bv-def"><dt>(−) Marketing: bonificações enviadas</dt><dd data-linha-def="bonificacoes">Pedidos da loja Marketing (envio de mídia, sem nota faturada): unidades enviadas × custo por unidade, mais frete e logística do mês rateados por pedido enviado e embalagem por envio, se configurada.</dd></div>
+        <div class="bv-def"><dt>(−) Comerciais e logística fixa</dt><dd data-linha-def="comerciais">Fee fixo de armazenagem e logística, plataforma de e-commerce, viagens, combustível e despesas comerciais gerais. A parte do fee fixo rateada para as bonificações sai daqui. <span class="bv-def-cats" data-draw="dre-cats" data-linha="comerciais"></span></dd></div>
+        <div class="bv-def"><dt>(−) Administrativas</dt><dd data-linha-def="administrativas">Contabilidade, jurídico e INPI, softwares e assinaturas, taxas, consultoria, utensílios e equipamentos, aluguel e contas da estrutura. <span class="bv-def-cats" data-draw="dre-cats" data-linha="administrativas"></span></dd></div>
+        <div class="bv-def"><dt>(−) Pessoal e pró-labore</dt><dd data-linha-def="pessoal">Salários, encargos, benefícios e pró-labore. <span class="bv-def-cats" data-draw="dre-cats" data-linha="pessoal"></span></dd></div>
+        <div class="bv-def"><dt>(−) Sem categoria no Bling</dt><dd data-linha-def="sem_categoria">Contas a pagar lançadas sem categoria no Bling. Quando aparecer valor aqui, categorize a conta no Bling.</dd></div>
+        <div class="bv-def"><dt>Resultado operacional</dt><dd data-linha-def="resultado_operacional">Margem de contribuição menos marketing, bonificações, comerciais, administrativas, pessoal e sem categoria.</dd></div>
+        <div class="bv-def"><dt>(±) Resultado financeiro</dt><dd data-linha-def="financeiro">Juros, tarifas bancárias e outras despesas financeiras (negativo) e rendimentos e juros recebidos (positivo). <span class="bv-def-cats" data-draw="dre-cats" data-linha="financeiro"></span></dd></div>
+        <div class="bv-def"><dt>(−) IR e CSLL</dt><dd data-linha-def="impostos_lucro">No Simples Nacional, IRPJ e CSLL já estão dentro do DAS; esta linha só terá valor se a empresa sair do Simples. <span class="bv-def-cats" data-draw="dre-cats" data-linha="impostos_lucro"></span></dd></div>
+        <div class="bv-def"><dt>Lucro líquido</dt><dd data-linha-def="lucro_liquido">Resultado operacional mais resultado financeiro, menos IR e CSLL.</dd></div>
+        <div class="bv-def"><dt>Margem líquida</dt><dd data-linha-def="margem_liquida">Lucro líquido ÷ receita bruta do mês.</dd></div>
+        <div class="bv-def"><dt>Memória: compras de produção</dt><dd data-linha-def="memo_compras">Fora do resultado. Contas a pagar de produção, que viram estoque: insumos, mão de obra da Favo de Mel, embalagem unitária, caixas de envio e displays, e fretes de fornecedor. O custo delas entra no resultado pelo CMV, conforme as unidades são vendidas. No fluxo de caixa entram inteiras. <span class="bv-def-cats" data-draw="dre-cats" data-linha="cmv"></span></dd></div>
+        <div class="bv-def"><dt>Memória: produto consumido</dt><dd data-linha-def="memo_consumo">Fora do resultado. Unidades vendidas e bonificadas no mês × custo por unidade: o que saiu do estoque.</dd></div>
+        <div class="bv-def"><dt>Memória: estoque estimado acumulado</dt><dd data-linha-def="memo_estoque">Fora do resultado. Compras acumuladas menos produto consumido acumulado. Compare com o estoque físico: se o estimado for bem maior, o custo por unidade está baixo; se ficar negativo, está alto.</dd></div>
+        <div class="bv-def"><dt>Fora da DRE</dt><dd data-linha-def="fora">Aportes, empréstimos de sócios, distribuição de lucros e transferências afetam só o caixa. Contas a receber de vendas também ficam fora, porque a receita já vem dos pedidos. Os meses antes de setembro de 2026 são pré-operacionais. <span class="bv-def-cats" data-draw="dre-cats" data-linha="fora"></span></dd></div>
+        <div class="bv-def"><dt>Caixa · Receita recebida</dt><dd data-linha-def="receita_caixa">Visão de caixa. Vendas a prazo (pedido com conta a receber no Bling) entram na data do recebimento; Shopify, PDV e vendas à vista entram na data do pedido. Bonificações não contam.</dd></div>
+        <div class="bv-def"><dt>Caixa · Receita líquida recebida</dt><dd data-linha-def="receita_liquida_caixa">Visão de caixa. Receita recebida menos deduções e impostos sobre venda pagos.</dd></div>
+        <div class="bv-def"><dt>Caixa · Compras de produção pagas</dt><dd data-linha-def="compras_producao">Visão de caixa. Insumos, recheios, embalagem unitária, mão de obra da Favo de Mel e fretes de fornecedor, na data em que foram pagos. Na visão de caixa substituem o CMV. <span class="bv-def-cats" data-draw="dre-cats" data-linha="cmv"></span></dd></div>
+        <div class="bv-def"><dt>Caixa · Resultado bruto de caixa</dt><dd data-linha-def="resultado_bruto_caixa">Visão de caixa. Receita líquida recebida menos compras de produção pagas.</dd></div>
+        <div class="bv-def"><dt>Caixa · Margem de contribuição de caixa</dt><dd data-linha-def="margem_caixa">Visão de caixa. Resultado bruto de caixa menos despesas variáveis pagas.</dd></div>
+        <div class="bv-def"><dt>Caixa · Resultado operacional de caixa</dt><dd data-linha-def="resultado_operacional_caixa">Visão de caixa. Margem de contribuição de caixa menos marketing, comerciais, administrativas, pessoal e sem categoria pagos no mês.</dd></div>
+        <div class="bv-def"><dt>Caixa · Geração de caixa do negócio</dt><dd data-linha-def="geracao_caixa">Visão de caixa. Quanto a operação gerou ou consumiu de caixa no mês, antes de aportes, empréstimos e distribuições.</dd></div>
+        <div class="bv-def"><dt>Caixa · Aportes e empréstimos recebidos</dt><dd data-linha-def="fora_entradas">Visão de caixa, fora do resultado. Dinheiro que entrou dos sócios (aporte de capital, empréstimo de sócios) e outras entradas não operacionais.</dd></div>
+        <div class="bv-def"><dt>Caixa · Distribuições e transferências pagas</dt><dd data-linha-def="fora_saidas">Visão de caixa, fora do resultado. Distribuição de lucros, transferências e outras saídas não operacionais.</dd></div>
+        <div class="bv-def"><dt>Caixa · Variação de caixa no mês</dt><dd data-linha-def="variacao_caixa">Visão de caixa, fora do resultado. Geração de caixa do negócio mais aportes e menos distribuições: quanto o saldo do banco deveria ter mudado no mês, segundo o Bling.</dd></div>
+      </dl>
+    </div>
   </section>
 
-  <section id="tela-nova-senha" class="cartao estreito" hidden>
-    <h1>Nova senha</h1>
-    <form id="form-nova">
-      <label>Nova senha (mínimo 8 caracteres)<input type="password" id="nova-senha" autocomplete="new-password" minlength="8" required></label>
-      <button type="submit" class="botao">Salvar</button>
-    </form>
-    <p class="msg" id="nova-msg" role="status"></p>
+  <!-- ============ ANÁLISE DE ÁREA (abre ao clicar nos cards de Metas) ============ -->
+  <section class="bv-sec" id="analise" data-sec="analise" hidden>
+    <div class="bv-an-topo">
+      <button type="button" class="bv-an-voltar" data-abrir="metas">← Metas</button>
+      <div class="bv-an-chips" role="group" aria-label="Área">
+        <button type="button" class="bv-an-chip" data-area-an="pdv" style="--area: var(--bv-pdv)">PDV</button>
+        <button type="button" class="bv-an-chip" data-area-an="organica" style="--area: var(--bv-org)">Venda orgânica</button>
+        <button type="button" class="bv-an-chip" data-area-an="performance" style="--area: var(--bv-perf)">Performance</button>
+        <button type="button" class="bv-an-chip" data-area-an="influencia" style="--area: var(--bv-infl)">MKT influência</button>
+      </div>
+      <div class="bv-ctrls">
+        <label for="ctl-an-per">Período
+          <select class="dash-select" id="ctl-an-per" data-param="an_periodo">
+            <option value="mes_atual">Mês atual</option>
+            <option value="mes_anterior">Mês anterior</option>
+            <option value="ult_7">Últimos 7 dias</option>
+            <option value="ult_30">Últimos 30 dias</option>
+            <option value="ult_90">Últimos 90 dias</option>
+            <option value="tudo">Desde o início</option>
+          </select>
+        </label>
+        <label for="ctl-an-grao">Ver por
+          <select class="dash-select" id="ctl-an-grao" data-param="an_grao">
+            <option value="dia">Dia</option>
+            <option value="semana">Semana</option>
+            <option value="mes">Mês</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="bv-an-tit" data-draw="an-titulo"></div>
+    <div class="bv-kpis" data-draw="an-kpis"></div>
+    <div class="bv-card bv-emb bv-an-opc" id="ranking-embaixadores">
+      <span class="bv-eyebrow">Liga dos embaixadores</span>
+      <h3 class="bv-h3">Ranking de vendas pelo cupom</h3>
+      <div class="bv-tw"><table class="bv-table bv-emb-tab bv-an-alvo" data-draw="emb-tabela"></table></div>
+      <details class="bv-details">
+        <summary>Como funcionam os níveis e as conquistas</summary>
+        <ul data-draw="emb-regras"></ul>
+      </details>
+    </div>
+
+    <div class="bv-card">
+      <div class="bv-row"><h3 class="bv-h3" data-draw="an-graf-tit"></h3><ul class="bv-legend" data-draw="an-graf-leg"></ul></div>
+      <div class="bv-chart" data-draw="an-graf"></div>
+    </div>
+    <div class="bv-card bv-an-opc">
+      <h3 class="bv-h3">ROAS por período</h3>
+      <div class="bv-chart bv-an-alvo" data-draw="an-graf2"></div>
+    </div>
+    <div class="bv-card">
+      <h3 class="bv-h3">Período a período</h3>
+      <div class="bv-tw"><table class="bv-table" data-draw="an-tab-per"></table></div>
+    </div>
+    <div class="bv-card bv-an-opc">
+      <h3 class="bv-h3">De onde veio: plataforma e posição do anúncio</h3>
+      <div class="bv-tw"><table class="bv-table bv-an-alvo" data-draw="an-tab-plat"></table></div>
+      <p class="bv-note">Do Meta: Facebook, Instagram, Audience Network e Messenger, por posição (feed, stories, reels…). Compras e valor são os atribuídos pelo próprio Meta.</p>
+    </div>
+    <div class="bv-card">
+      <h3 class="bv-h3" data-draw="an-tab2-tit"></h3>
+      <div class="bv-tw"><table class="bv-table" data-draw="an-tab2"></table></div>
+    </div>
+    <div class="bv-card">
+      <h3 class="bv-h3" data-draw="an-prod-tit"></h3>
+      <div class="bv-tw"><table class="bv-table" data-draw="an-tab-prod"></table></div>
+    </div>
+    <p class="bv-note" data-draw="an-nota"></p>
   </section>
 
-  <section id="tela-sem-acesso" class="cartao estreito" hidden>
-    <h1>Sem acesso ainda</h1>
-    <p>Seu login funcionou, mas este e-mail ainda não tem um perfil no painel. Peça a um administrador para liberar.</p>
+  <!-- ============ USUÁRIOS (admin) ============ -->
+  <section class="bv-sec" id="usuarios" data-sec="usuarios" hidden>
+    <h2 class="bv-h2">Usuários e perfis</h2>
+    <div id="usuarios-conteudo"><p class="bv-note">Carregando…</p></div>
+  </section>
+  <!-- ============ CPV ============ -->
+  <section class="bv-sec" id="cpv" data-sec="cpv" hidden>
+    <div class="bv-central-tit">
+      <span class="bv-eyebrow">Custo do produto</span>
+      <h2 class="bv-h2">CPV por unidade produzida</h2>
+      <p class="bv-note">Custo de cada cookie ou brownie de 45 g que sai da fábrica: insumos pela receita (gramas ÷ rendimento × preço por kg), industrialização da Favo de Mel, embalagem primária, frete dos insumos até a fábrica e formas (amortizadas). A embalagem de canal (caixa de envio ou display) entra no CPV de cada canal. O frete de entrega ao cliente não entra.</p>
+    </div>
+
+    <div class="bv-placar bv-moldura" id="cpv-destaque">
+      <div class="bv-placar-topo"><span class="bv-eyebrow bv-eyebrow-inv">CPV de fábrica · média dos lotes 1 e 2</span></div>
+      <div class="bv-placar-num">
+        <span class="bv-placar-val" data-draw="cpv-medio">—</span>
+        <span class="bv-placar-de">por unidade</span>
+      </div>
+      <div class="bv-placar-stats" data-draw="cpv-stats"></div>
+    </div>
+
+    <div class="bv-card" id="cpv-composicao">
+      <div class="bv-row">
+        <span class="bv-eyebrow">De que é feito o custo de cada unidade</span>
+        <ul class="bv-legend">
+          <li><span class="bv-sw" style="background: var(--bv-perf)"></span>Insumos (pela receita)</li>
+          <li><span class="bv-sw" style="background: var(--bv-pdv)"></span>Industrialização</li>
+          <li><span class="bv-sw" style="background: var(--bv-org)"></span>Embalagem primária</li>
+          <li><span class="bv-sw" style="background: var(--bv-ecom)"></span>Frete de insumos</li>
+          <li><span class="bv-sw" style="background: var(--bv-infl)"></span>Formas (amortizadas)</li>
+        </ul>
+      </div>
+      <div data-draw="cpv-barras"></div>
+    </div>
+
+    <div class="bv-card" id="cpv-entregue">
+      <span class="bv-eyebrow">Custo por formato vendido</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="cpv-formatos"></table>
+      </div>
+      <p class="bv-note">Caixa de 12 do e-commerce = 12 unidades + caixa de envio RKT. Display de PDV = 12 unidades + display Bartolo + 1/4 da caixa master I9BOX. O frete de entrega ao cliente (Mandaê) não entra no CPV: é despesa de venda, fica na DRE em "Despesas variáveis", e parte dele o cliente paga no pedido.</p>
+    </div>
+
+    <div class="bv-card" id="cpv-sabores">
+      <span class="bv-eyebrow">CPV por sabor · pela receita</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="cpv-sku" data-source="cpv_sku" data-row-key="codigo"></table>
+      </div>
+      <p class="bv-note">Insumos = gramas de cada insumo na receita ÷ rendimento (unidades por receita) × preço por kg pago (média das compras, quando houve mais de uma, como no caseinato). Industrialização vem da NF da Favo de Mel. Embalagem primária, frete de insumos e formas são rateados igualmente por unidade. E-commerce soma a caixa de envio; PDV soma display e caixa master.</p>
+    </div>
+
+    <div class="bv-card" id="cpv-receitas">
+      <span class="bv-eyebrow">Insumos da receita · gramas e custo por unidade</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="cpv-receita-tab" data-source="cpv_receita" data-row-key="insumo"></table>
+      </div>
+      <p class="bv-note">Preço por kg tirado da descrição das contas a pagar no Bling. Insumos marcados "Favo de Mel" não têm compra da Bëlvor nos lotes 1 e 2 e foram considerados incluídos nos R$ 2,20 de industrialização. Para corrigir preço ou fornecedor, edite a tabela <code>insumos</code> no Supabase; receitas e rendimentos ficam em <code>receitas</code> e <code>receita_rendimento</code>.</p>
+    </div>
+
+    <div class="bv-card" id="cpv-conciliacao">
+      <span class="bv-eyebrow">Conciliação · compras consumidas × receita</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="cpv-conc" data-source="cpv_conc" data-row-key="fornecedor"></table>
+      </div>
+      <p class="bv-note">Consumido = valor pago − sobra em estoque informada. Pela receita = o que os lotes 1 e 2 deveriam ter usado. A diferença é perda na produção, receita aplicada com mais recheio do que o previsto ou estoque maior do que o informado. Nos aromas da Aplinova, quase toda a diferença é estoque: 25 kg comprados para 1,6 kg usados.</p>
+    </div>
+
+    <div class="bv-card" id="cpv-componentes">
+      <span class="bv-eyebrow">Componentes do CPV</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="cpv-tabela" data-source="cpv_comp" data-row-key="id"></table>
+      </div>
+      <p class="bv-note">Valores pagos no contas a pagar do Bling. Os insumos entram no CPV pela receita (tabelas acima); aqui aparecem só para a conciliação. "Sobra" é quanto desse valor ainda está em estoque e vai para os próximos lotes. Linhas marcadas "confirmar" usam uma estimativa. Para corrigir, edite a tabela <code>cpv_componentes</code> no Supabase (colunas <code>sobra</code>, <code>quantidade</code>, <code>confirmar</code>); o painel recalcula sozinho.</p>
+    </div>
+
+    <div class="bv-card" id="cpv-lotes">
+      <span class="bv-eyebrow">Lotes produzidos</span>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="cpv-lotes-tab" data-source="lotes_prod" data-row-key="lote,produto"></table>
+      </div>
+      <p class="bv-note">Das notas fiscais de entrada da Favo de Mel (R$ 2,20 por unidade de industrialização). Novos lotes entram na tabela <code>lotes_producao</code> do Supabase.</p>
+    </div>
   </section>
 
-  <!-- Painel -->
-  <section id="tela-painel" hidden>
-    <nav class="abas" id="abas" role="tablist"></nav>
-    <div id="conteudo"></div>
-  </section>
-</main>
+  <!-- ============ FLUXO DE CAIXA ============ -->
+  <section class="bv-sec" id="caixa" data-sec="caixa" hidden>
+    <h2 class="bv-h2">Previsão: o que está em aberto no Bling</h2>
+    <div class="bv-card" id="janelas">
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-janelas" data-source="janelas" data-row-key="janela"></table>
+      </div>
+      <p class="bv-note">Contas a pagar e a receber em aberto pelo vencimento. Recebimentos de vendas só aparecem aqui quando estão lançados no contas a receber.</p>
+    </div>
 
+    <div class="bv-card" id="grafico-previsao">
+      <div class="bv-row">
+        <h3 class="bv-h3">Entradas e saídas previstas, dia a dia, nos próximos 90 dias</h3>
+        <div class="bv-ctrls">
+          <label for="ctl-saldo">Saldo em conta hoje (R$)
+            <input class="bv-input" id="ctl-saldo" type="number" step="0.01" inputmode="decimal" data-param="saldo">
+          </label>
+        </div>
+      </div>
+      <ul class="bv-legend">
+        <li><span class="bv-sw" data-c="0"></span>A receber</li>
+        <li><span class="bv-sw" data-c="1"></span>A pagar</li>
+        <li><span class="bv-sw bv-line"></span>Saldo projetado (saldo de hoje + entradas − saídas)</li>
+      </ul>
+      <div class="bv-chart" data-draw="chart-prev" data-source="previsao_diaria"></div>
+      <p class="bv-note">Contas vencidas e não pagas ficam fora do gráfico e aparecem na linha "Em atraso" acima. Informe o saldo do banco para ver o saldo projetado real; o valor fica só no seu navegador.</p>
+    </div>
+
+    <div class="bv-card" id="proximos">
+      <div class="bv-row">
+        <h3 class="bv-h3">Lançamentos em aberto (atrasados e próximos 90 dias)</h3>
+        <div class="bv-ctrls">
+          <label for="ctl-prox">Mostrar
+            <select class="dash-select" id="ctl-prox" data-param="prox_tipo">
+              <option value="todos">A pagar e a receber</option>
+              <option value="pagar">Só a pagar</option>
+              <option value="receber">Só a receber</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-prox" data-source="caixa" data-row-key="tipo,id"></table>
+      </div>
+    </div>
+
+    <div class="bv-row">
+      <h2 class="bv-h2">Realizado: o que já foi pago e recebido</h2>
+      <div class="bv-ctrls">
+        <label for="ctl-real-periodo">Período
+          <select class="dash-select" id="ctl-real-periodo" data-param="real_periodo">
+            <option value="mes_atual">Mês atual</option>
+            <option value="mes_anterior">Mês anterior</option>
+            <option value="ult_90">Últimos 90 dias</option>
+            <option value="ano">Ano atual</option>
+            <option value="tudo">Tudo</option>
+          </select>
+        </label>
+        <label for="ctl-real-grao">Agrupar por
+          <select class="dash-select" id="ctl-real-grao" data-param="real_grao">
+            <option value="dia">Dia</option>
+            <option value="semana">Semana</option>
+            <option value="mes">Mês</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="bv-kpis" id="realizado-totais">
+      <div class="bv-kpi">
+        <span class="bv-kpi-label">Entradas no período</span>
+        <span class="bv-kpi-val" data-draw="real-ent">—</span>
+        <span class="bv-kpi-sub" data-draw="real-ent-sub"></span>
+      </div>
+      <div class="bv-kpi">
+        <span class="bv-kpi-label">Saídas no período</span>
+        <span class="bv-kpi-val" data-draw="real-sai">—</span>
+        <span class="bv-kpi-sub"></span>
+      </div>
+      <div class="bv-kpi">
+        <span class="bv-kpi-label">Saldo do período</span>
+        <span class="bv-kpi-val" data-draw="real-liq">—</span>
+        <span class="bv-kpi-sub" data-draw="real-liq-sub"></span>
+      </div>
+    </div>
+    <div class="bv-card" id="grafico-realizado">
+      <ul class="bv-legend">
+        <li><span class="bv-sw" data-c="0"></span>Recebido</li>
+        <li><span class="bv-sw" data-c="1"></span>Pago</li>
+        <li><span class="bv-sw bv-line"></span>Saldo acumulado no período</li>
+      </ul>
+      <div class="bv-chart" data-draw="chart-real" data-source="caixa"></div>
+      <p class="bv-note">Pela data real da baixa no Bling (borderô). Entradas incluem aportes e empréstimos de sócios.</p>
+    </div>
+    <div class="bv-card" id="saidas-categoria">
+      <h3 class="bv-h3">Saídas do período por categoria</h3>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-cat" data-source="saidas_categoria" data-row-key="periodo,categoria"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SETORES ============ -->
+  <section class="bv-sec" id="setores" data-sec="setores" hidden>
+    <h2 class="bv-h2">Faturamento por setor</h2>
+    <div class="bv-card" id="grafico-setores">
+      <ul class="bv-legend">
+        <li><span class="bv-sw" data-c="0"></span>PDV</li>
+        <li><span class="bv-sw" data-c="1"></span>Shopify</li>
+        <li><span class="bv-sw" data-c="2"></span>Vendas orgânicas</li>
+        <li><span class="bv-sw" data-c="3"></span>Sem loja</li>
+      </ul>
+      <div class="bv-chart" data-draw="chart-setores" data-source="pedidos_mes"></div>
+      <p class="bv-note">PDV = loja PDV do Bling. Ecommerce = Shopify, Vendas orgânicas e pedidos sem loja. A loja Marketing é bonificação (envio de mídia, sem nota faturada) e aparece na aba Marketing, não aqui. Pedidos cancelados ficam fora.</p>
+    </div>
+    <div class="bv-card" id="tabela-setores">
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-setores" data-source="setores_mes" data-row-key="mes"></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MARKETING ============ -->
+  <section class="bv-sec" id="marketing" data-sec="marketing" hidden>
+    <h2 class="bv-h2">Investimento em marketing</h2>
+    <div class="bv-kpis">
+      <div class="bv-kpi" id="kpi-mkt-total">
+        <span class="bv-kpi-label">Investimento total · mês atual</span>
+        <span class="bv-kpi-val dash-skeleton" data-draw="mkt-total">—</span>
+        <span class="bv-kpi-sub" data-draw="mkt-total-sub"></span>
+      </div>
+      <div class="bv-kpi" id="kpi-mkt-bonif">
+        <span class="bv-kpi-label">Bonificações · mês atual</span>
+        <span class="bv-kpi-val dash-skeleton" data-draw="mkt-bonif">—</span>
+        <span class="bv-kpi-sub" data-draw="mkt-bonif-sub"></span>
+      </div>
+      <div class="bv-kpi" id="kpi-mkt-envio">
+        <span class="bv-kpi-label">Custo por envio a influenciador · mês atual</span>
+        <span class="bv-kpi-val dash-skeleton" data-draw="mkt-envio">—</span>
+        <span class="bv-kpi-sub" data-draw="mkt-envio-sub"></span>
+      </div>
+      <div class="bv-kpi" id="kpi-mkt-meta">
+        <span class="bv-kpi-label">Meta Ads · mês atual</span>
+        <span class="bv-kpi-val dash-skeleton" data-draw="mkt-meta">—</span>
+        <span class="bv-kpi-sub" data-draw="mkt-meta-sub"></span>
+      </div>
+    </div>
+
+    <div class="bv-card" id="grafico-marketing">
+      <div class="bv-row">
+        <h3 class="bv-h3">Investimento em marketing por mês e por tipo</h3>
+        <ul class="bv-legend">
+          <li><span class="bv-sw" data-c="0"></span>Bonificações (produto + envio)</li>
+          <li><span class="bv-sw" data-c="1"></span>Meta Ads</li>
+          <li><span class="bv-sw" data-c="2"></span>Outros (conteúdo, influência, branding, eventos)</li>
+        </ul>
+      </div>
+      <div class="bv-chart" data-draw="chart-marketing" data-source="marketing_resumo"></div>
+      <p class="bv-note">Por mês de competência. Bonificações = unidades enviadas × custo unitário + frete e logística rateados por envio. Os outros tipos vêm das contas a pagar classificadas como marketing.</p>
+    </div>
+
+    <div class="bv-card" id="tabela-marketing">
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-marketing" data-source="marketing_resumo" data-row-key="mes"></table>
+      </div>
+      <p class="bv-note">Retorno Meta Ads = resultado gerado informado ÷ investimento no Meta. O resultado é lançado à mão na tabela <code>resultado_mensal</code> do Supabase (<code>mes</code> como 2026-11, <code>alocacao_gerencial</code> = Performance, <code>resultado_gerado</code> em reais).</p>
+    </div>
+
+    <div class="bv-card" id="inbazz-mes">
+      <h3 class="bv-h3">Influência · creators da Inbazz</h3>
+      <div class="bv-kpis" data-draw="inbazz-kpis"></div>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-inbazz-mes" data-source="inbazz_mes" data-row-key="mes"></table>
+      </div>
+      <p class="bv-note">Da API da Inbazz, sincronizada junto com o Bling. Vendas por cupom = pedidos com cupom de creator, sem cancelados, pelo valor líquido. Comissão = lançamentos de comissão não cancelados. Investimento em influência = produto e frete das bonificações a influenciadores (Bling) + comissões. Retorno = vendas por cupom ÷ investimento. Vendas que o creator gera sem cupom (link, story sem código) não aparecem aqui.</p>
+    </div>
+
+    <div class="bv-card" id="inbazz-creators">
+      <h3 class="bv-h3">Creators</h3>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-inbazz-creators" data-source="inbazz_creators" data-row-key="creator_id"></table>
+      </div>
+      <p class="bv-note">Todos os creators da comunidade, com os posts capturados pela Inbazz (hoje só stories do Instagram), os pedidos com o cupom de cada um e a comissão. Contatos e endereços não são copiados para o Supabase.</p>
+    </div>
+
+    <div class="bv-card" id="envios-bonificacao">
+      <div class="bv-row">
+        <h3 class="bv-h3">Envios de bonificação</h3>
+        <div class="bv-ctrls">
+          <label for="ctl-bonif-mes">Mês
+            <select class="dash-select" id="ctl-bonif-mes" data-draw="bonif-meses" data-param="bonif_mes"></select>
+          </label>
+        </div>
+      </div>
+      <div class="bv-tw">
+        <table class="bv-table" data-draw="tab-bonif" data-source="bonificacoes" data-row-key="id"></table>
+      </div>
+      <details class="bv-details">
+        <summary>Como o custo de cada envio é calculado</summary>
+        <ul>
+          <li><strong>Produto:</strong> unidades × CPV médio real dos lotes (aba CPV). As unidades vêm dos itens do pedido: uma "Caixa Mista 12un" conta 12, um "Display 12 un" conta 12, "2 Caixas" conta 24.</li>
+          <li><strong>Envio:</strong> frete e logística do mês (Frete - Envio ao Cliente, Logística - Fee Variável e Fee Fixo) divididos pelo número de pedidos enviados no mês, vendas e bonificações juntas. Enquanto as contas de frete do mês não forem lançadas no Bling, o envio aparece zerado.</li>
+          <li><strong>Embalagem:</strong> valor fixo por envio, hoje zero.</li>
+          <li><strong>Valor de tabela:</strong> o que esses produtos valeriam vendidos pelo preço do pedido no Bling. Serve de referência, não é custo.</li>
+          <li>Para mudar o custo por unidade, a embalagem ou fixar um frete por envio, edite a tabela <code>parametros</code> no Supabase.</li>
+          <li>Na DRE, o custo das bonificações fica na linha "Marketing: bonificações enviadas". O produto sai do estoque (não do CMV, que é só de vendas) e o frete e a logística saem das linhas de logística, onde já estavam lançados.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="app.js?v=2"></script>
+<script src="runtime.js?v=202611231300"></script>
+<script src="painel.js?v=202611231300"></script>
+<script src="abas.js?v=202611231300"></script>
 </body>
 </html>
