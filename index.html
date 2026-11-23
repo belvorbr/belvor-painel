@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Bëlvor</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Lexend+Peta:wght@400;500&family=Libre+Franklin:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topo">
+  <div class="marca"><img src="simbolo-branco.png" alt="" class="simbolo"><img src="logo-branco.svg" alt="Bëlvor" class="logo"></div>
+  <div class="quem" id="quem" hidden><span id="quem-nome"></span><span id="quem-papeis" class="papeis"></span><button type="button" id="sair" class="link">Sair</button></div>
+</header>
+
+<main id="app">
+  <!-- Login -->
+  <section id="tela-login" class="cartao estreito" hidden>
+    <h1>Entrar no painel</h1>
+    <form id="form-login">
+      <label>E-mail<input type="email" id="login-email" autocomplete="username" required></label>
+      <label>Senha<input type="password" id="login-senha" autocomplete="current-password" required></label>
+      <button type="submit" class="botao">Entrar</button>
+    </form>
+    <p class="msg" id="login-msg" role="status"></p>
+    <div class="links">
+      <button type="button" class="link" id="ir-cadastro">Primeiro acesso: criar minha senha</button>
+      <button type="button" class="link" id="ir-esqueci">Esqueci a senha</button>
+    </div>
+  </section>
+
+  <section id="tela-cadastro" class="cartao estreito" hidden>
+    <h1>Primeiro acesso</h1>
+    <p class="nota">Use o e-mail que o administrador cadastrou. Você vai receber um e-mail para confirmar.</p>
+    <form id="form-cadastro">
+      <label>E-mail<input type="email" id="cad-email" autocomplete="username" required></label>
+      <label>Crie uma senha (mínimo 8 caracteres)<input type="password" id="cad-senha" autocomplete="new-password" minlength="8" required></label>
+      <button type="submit" class="botao">Criar acesso</button>
+    </form>
+    <p class="msg" id="cad-msg" role="status"></p>
+    <button type="button" class="link volta">← Voltar</button>
+  </section>
+
+  <section id="tela-esqueci" class="cartao estreito" hidden>
+    <h1>Esqueci a senha</h1>
+    <form id="form-esqueci">
+      <label>E-mail<input type="email" id="esq-email" autocomplete="username" required></label>
+      <button type="submit" class="botao">Enviar link</button>
+    </form>
+    <p class="msg" id="esq-msg" role="status"></p>
+    <button type="button" class="link volta">← Voltar</button>
+  </section>
+
+  <section id="tela-nova-senha" class="cartao estreito" hidden>
+    <h1>Nova senha</h1>
+    <form id="form-nova">
+      <label>Nova senha (mínimo 8 caracteres)<input type="password" id="nova-senha" autocomplete="new-password" minlength="8" required></label>
+      <button type="submit" class="botao">Salvar</button>
+    </form>
+    <p class="msg" id="nova-msg" role="status"></p>
+  </section>
+
+  <section id="tela-sem-acesso" class="cartao estreito" hidden>
+    <h1>Sem acesso ainda</h1>
+    <p>Seu login funcionou, mas este e-mail ainda não tem um perfil no painel. Peça a um administrador para liberar.</p>
+  </section>
+
+  <!-- Painel -->
+  <section id="tela-painel" hidden>
+    <nav class="abas" id="abas" role="tablist"></nav>
+    <div id="conteudo"></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
