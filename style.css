@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 :root {
   --noite: #0a0a0a; --papel: #f6f4f0; --tinta: #161616; --mudo: #6b6b6b; --linha: #e2ded7; --painel: #ffffff;
   --pdv: #1099D6; --org: #8DB52A; --perf: #F4831F; --infl: #D8238E; --ecom: #602D8F; --verde: #15623F; --vinho: #760C0C;
