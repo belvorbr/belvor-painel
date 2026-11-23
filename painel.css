@@ -328,3 +328,8 @@
 .bv-marca-grupo { display: inline-flex; align-items: center; gap: 12px; }
 .bv-simbolo { height: clamp(40px, 5.5vw, 58px); width: auto; display: block; }
 .bv-emb-coroa { height: 54px; width: auto; margin-bottom: 2px; }
+.bv-kpi-grupo { grid-column: 1 / -1; font-family: var(--bv-sub); text-transform: uppercase; letter-spacing: .14em; font-size: 10.5px; color: var(--color-fg-muted); margin-top: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--color-border-line); }
+.bv-kpi .bv-info { opacity: .55; cursor: help; }
+.bv-explica summary { cursor: pointer; font-weight: 600; }
+.bv-explica ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; line-height: 1.5; font-size: 13px; color: var(--color-fg-muted); }
+.bv-explica b { color: var(--color-fg); }

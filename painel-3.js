@@ -1291,16 +1291,60 @@ const anMetricas = (area, a, b) => {
     return { gasto: g, receita: perf, roas: div(perf, g), meta_valor: mv, roas_meta: div(mv, g), compras: c, cpa: div(g, c), ctr: div(cl, im), cpm: div(g * 1000, im), cpc: div(g, cl), ticket: div(mv, c) };
   }
   const env = (dash.data('envios_creator').data || []).filter((r) => dentro(r.data, a, b));
+  const envC = env.filter((r) => r.creator_id);
   const ped = (dash.data('pedidos_canal').data || []).filter((r) => r.canal === 'influencia_cupom' && dentro(r.data, a, b));
-  const inv = d3.sum(env, (r) => num(r.investimento)) + d3.sum(ped, (r) => num(r.comissao));
-  const rec = s('influencia'), cup = s('cupom');
-  return { receita: rec, cupom: cup, cupom_pedidos: s('cupom_pedidos'), sem_cupom: rec - cup, envios: env.length, custo_envios: d3.sum(env, (r) => num(r.investimento)), comissao: d3.sum(ped, (r) => num(r.comissao)), investimento: inv, retorno_cupom: div(cup, inv), retorno: div(rec, inv) };
+  const rec = s('influencia'), cup = d3.sum(ped, (r) => num(r.gmv_cupom)), n = ped.length;
+  const com = d3.sum(ped, (r) => num(r.comissao)), cEnv = d3.sum(env, (r) => num(r.investimento)), cEnvC = d3.sum(envC, (r) => num(r.investimento));
+  const cpv = d3.sum(ped, (r) => num(r.cpv_pedido)), custoReal = com + cEnvC;
+  const hoje = BV.hoje(), fimEf = b < hoje ? b : hoje;
+  const iniEf = a > '2001-01-01' ? a : (dias.length ? dias[0].data : fimEf);
+  const nDias = Math.max(1, Math.round((new Date(fimEf + 'T00:00:00Z') - new Date(String(iniEf).slice(0, 10) + 'T00:00:00Z')) / 864e5) + 1);
+  const comEnvio = new Set(envC.map((r) => r.creator_id)), vendendo = new Set(ped.map((r) => r.creator_id));
+  const converteram = [...comEnvio].filter((id) => vendendo.has(id)).length;
+  return { receita: rec, cupom: cup, cupom_pedidos: n, sem_cupom: rec - cup, ticket_cupom: div(cup, n), media_dia: cup / nDias, dias: nDias,
+    comissao: com, custo_venda_com: div(com, n), roi_inbazz: com ? (cup - com) / com : null,
+    envios: env.length, envios_creators: envC.length, custo_envios: cEnv, custo_envios_creators: cEnvC,
+    custo_venda_real: div(custoReal, n), retorno_real: div(cup, custoReal), roi_real: custoReal ? (cup - custoReal) / custoReal : null,
+    cpv_cupom: cpv, lucro_cupom: cup - cpv - custoReal, margem_cupom: div(cup - cpv - custoReal, cup),
+    investimento: cEnv + com, retorno: div(rec, cEnv + com), retorno_cupom: div(cup, cEnv + com),
+    creators_envio: comEnvio.size, creators_vendendo: vendendo.size, conversao_envio: div(converteram, comEnvio.size), envios_por_venda: div(envC.length, n) };
 };
 const anPronto = (el) => {
   const ids = ['canais_dia', 'pedidos_canal'].concat(anArea() === 'influencia' ? ['envios_creator'] : []);
   return BV.status(el, ...ids);
 };
 
+/* Explicação de cada indicador da influência (ⓘ nos cartões e lista abaixo deles) */
+const AN_EXPLICA = {
+  cupom: ['Vendas pelo cupom', 'Soma do valor dos produtos dos pedidos com cupom de creator, sem o frete e sem cancelados ou estornados. É o mesmo número do painel da Inbazz.'],
+  cupom_pedidos: ['Pedidos com cupom', 'Quantidade de pedidos do site em que o cliente usou o cupom de um creator da Inbazz.'],
+  ticket_cupom: ['Ticket médio', 'Vendas pelo cupom ÷ pedidos com cupom.'],
+  media_dia: ['Média diária de vendas', 'Vendas pelo cupom ÷ dias corridos do período (até hoje).'],
+  comissao: ['Comissão', 'Soma das comissões dos pedidos com cupom, conforme a Inbazz.'],
+  custo_venda_com: ['Custo por venda (comissão)', 'Comissão ÷ pedidos com cupom. É o "Custo / venda" da Inbazz.'],
+  roi_inbazz: ['ROI Inbazz', '(Vendas pelo cupom − comissão) ÷ comissão. Considera só a comissão como custo, como o painel da Inbazz.'],
+  envios_creators: ['Envios a creators da Inbazz', 'Bonificações do Bling (até 24 unidades) para pessoas ligadas a um creator da Inbazz, no período.'],
+  custo_envios_creators: ['Custo desses envios', 'Produto pelo CPV de cada formato + frete médio do mês, desses envios.'],
+  custo_venda_real: ['Custo por venda real', '(Comissão + custo dos envios a creators) ÷ pedidos com cupom.'],
+  retorno_real: ['Retorno real', 'Vendas pelo cupom ÷ (comissão + custo dos envios a creators). Acima de 1× as vendas pagam o que foi investido.'],
+  roi_real: ['ROI real', '(Vendas pelo cupom − comissão − envios) ÷ (comissão + envios). Mesma conta do ROI Inbazz, mas com os envios.'],
+  cpv_cupom: ['CPV dos produtos vendidos', 'Custo de produção do que foi vendido pelo cupom: unidades de cada item × CPV do formato (caixa, display ou unidade).'],
+  lucro_cupom: ['Lucro pelo cupom', 'Vendas pelo cupom − CPV dos produtos vendidos − comissão − envios a creators. Não inclui frete de entrega nem impostos.'],
+  margem_cupom: ['Margem pelo cupom', 'Lucro pelo cupom ÷ vendas pelo cupom.'],
+  receita: ['Receita de influência', 'Vendas do site − receita atribuída pelo Meta. Inclui as vendas pelo cupom e as que a influência gera sem cupom.'],
+  sem_cupom: ['Vendas sem cupom', 'Receita de influência − vendas pelo cupom.'],
+  envios: ['Envios a influenciadores', 'Todas as bonificações de até 24 unidades no período, de creators da Inbazz ou não.'],
+  investimento: ['Investimento total', 'Custo de todos os envios a influenciadores + comissões.'],
+  retorno: ['Retorno da influência', 'Receita de influência ÷ investimento total.'],
+  creators_envio: ['Creators com envio', 'Creators da Inbazz que receberam pelo menos um envio no período.'],
+  creators_vendendo: ['Creators vendendo', 'Creators com pelo menos um pedido com o próprio cupom no período.'],
+  conversao_envio: ['Conversão dos envios', 'Creators que receberam envio e venderam ÷ creators que receberam envio, no período.'],
+  envios_por_venda: ['Envios por venda', 'Envios a creators da Inbazz ÷ pedidos com cupom: quantos envios foram precisos para cada venda.'],
+};
+dash.draw('an-explica', (el) => {
+  el.replaceChildren(); if (anArea() !== 'influencia') return;
+  for (const [, [nome, txt]] of Object.entries(AN_EXPLICA)) { const li = nd('li'); li.append(nd('b', null, nome + ': '), document.createTextNode(txt)); el.append(li); }
+});
 dash.draw('an-titulo', (el) => {
   el.replaceChildren(); const a = anArea(), p = anPeriodo();
   el.style.setProperty('--area', AN[a].cor);
@@ -1312,7 +1356,9 @@ dash.draw('an-kpis', (el) => {
   el.replaceChildren(); if (!anPronto(el)) return;
   const a = anArea(), p = anPeriodo(), m = anMetricas(a, p.ini, p.fim), o = p.pi ? anMetricas(a, p.pi, p.pf) : null;
   const card = (rot, campo, fmt, bom = 1) => {
-    const d = nd('div', 'bv-kpi'); d.append(nd('span', 'bv-kpi-label', rot), nd('span', 'bv-kpi-val', fmt(m[campo])));
+    const d = nd('div', 'bv-kpi'); const lab = nd('span', 'bv-kpi-label', rot);
+    if (AN_EXPLICA[campo] && a === 'influencia') { d.title = AN_EXPLICA[campo][1]; lab.append(nd('span', 'bv-info', ' ⓘ')); }
+    d.append(lab, nd('span', 'bv-kpi-val', fmt(m[campo])));
     if (o && m[campo] !== null && o[campo]) {
       const v = m[campo] / o[campo] - 1; const sub = nd('span', 'bv-kpi-sub', `${v >= 0 ? '+' : ''}${BV.pct(v)} · antes ${fmt(o[campo])}`);
       sub.classList.add(bom === 0 ? 'bv-neutro' : v * bom >= 0 ? 'bv-pos' : 'bv-neg'); d.append(sub);
@@ -1327,9 +1373,20 @@ dash.draw('an-kpis', (el) => {
     card('Compras (Meta)', 'compras', BV.int); card('Custo por compra', 'cpa', BV.brl, -1);
     card('CTR', 'ctr', BV.pct); card('CPM', 'cpm', BV.brl, -1); card('Ticket médio (Meta)', 'ticket', BV.brl);
   } else {
-    card('Receita de influência', 'receita', BV.brl); card('Receita por cupom de creator', 'cupom', BV.brl); card('Pedidos com cupom', 'cupom_pedidos', BV.int);
-    card('Envios a influenciadores', 'envios', BV.int, 0); card('Investimento (envios + comissões)', 'investimento', BV.brl, 0);
-    card('Retorno só por cupom', 'retorno_cupom', xfmt); card('Retorno da influência', 'retorno', xfmt);
+    const grupo = (t) => el.append(nd('div', 'bv-kpi-grupo', t));
+    grupo('Vendas pelo cupom · mesmos números da Inbazz');
+    card('Vendas pelo cupom', 'cupom', BV.brl); card('Pedidos com cupom', 'cupom_pedidos', BV.int); card('Ticket médio', 'ticket_cupom', BV.brl);
+    card('Média diária de vendas', 'media_dia', BV.brl); card('Comissão', 'comissao', BV.brl, 0); card('Custo por venda (comissão)', 'custo_venda_com', BV.brl, -1);
+    card('ROI Inbazz', 'roi_inbazz', BV.pct);
+    grupo('Custo real e lucro · somando os envios de produto');
+    card('Envios a creators da Inbazz', 'envios_creators', BV.int, 0); card('Custo desses envios', 'custo_envios_creators', BV.brl, 0);
+    card('Custo por venda real', 'custo_venda_real', BV.brl, -1); card('Retorno real', 'retorno_real', xfmt); card('ROI real', 'roi_real', BV.pct);
+    card('CPV dos produtos vendidos', 'cpv_cupom', BV.brl, 0); card('Lucro pelo cupom', 'lucro_cupom', BV.brl); card('Margem pelo cupom', 'margem_cupom', BV.pct);
+    grupo('Influência total · com e sem cupom');
+    card('Receita de influência', 'receita', BV.brl); card('Vendas sem cupom', 'sem_cupom', BV.brl); card('Envios a influenciadores', 'envios', BV.int, 0);
+    card('Investimento total', 'investimento', BV.brl, 0); card('Retorno da influência', 'retorno', xfmt);
+    card('Creators com envio', 'creators_envio', BV.int, 0); card('Creators vendendo', 'creators_vendendo', BV.int); card('Conversão dos envios', 'conversao_envio', BV.pct);
+    card('Envios por venda', 'envios_por_venda', BV.dec, -1);
   }
 });
 
@@ -1349,7 +1406,7 @@ const anTipInfl = (d) => {
   const dias = dash.data('canais_dia').data.filter((r) => dentro(r.data, p.ini, p.fim) && balde(r.data) === d.k);
   const fat = d3.sum(dias, (r) => num(r.pdv) + num(r.organica) + num(r.site)), site = d3.sum(dias, (r) => num(r.site));
   const ped = (dash.data('pedidos_canal').data || []).filter((r) => r.canal === 'influencia_cupom' && dentro(r.data, p.ini, p.fim) && balde(r.data) === d.k);
-  const por = d3.rollups(ped, (v) => ({ n: v.length, val: d3.sum(v, (r) => num(r.total)) }), (r) => r.creator || r.cupom || '(sem nome)').sort((a, b) => b[1].val - a[1].val);
+  const por = d3.rollups(ped, (v) => ({ n: v.length, val: d3.sum(v, (r) => num(r.gmv_cupom)) }), (r) => r.creator || r.cupom || '(sem nome)').sort((a, b) => b[1].val - a[1].val);
   const linhas = [['Faturamento total', BV.brl(fat)], ['Vendas do site', BV.brl(site)], ['MKT influência', BV.brl(d.receita)], ['Pelo cupom', BV.brl(d.cupom)]];
   for (const [nome, o] of por) linhas.push(['  ' + nome, `${BV.brl(o.val)}${o.n > 1 ? ` (${o.n} pedidos)` : ''}`]);
   if (!por.length) linhas.push(['Vendas pelo cupom', 'nenhuma']);
@@ -1438,7 +1495,7 @@ dash.draw('an-tab2', (el) => {
     const ped = dash.data('pedidos_canal').data.filter((r) => r.canal === 'influencia_cupom' && dentro(r.data, p.ini, p.fim));
     const linhas = dash.data('inbazz_creators').data.map((c) => {
       const e = env.filter((r) => r.creator_id === c.creator_id), v = ped.filter((r) => r.creator_id === c.creator_id);
-      const custo = d3.sum(e, (r) => num(r.investimento)), com = d3.sum(v, (r) => num(r.comissao)), vend = d3.sum(v, (r) => num(r.total));
+      const custo = d3.sum(e, (r) => num(r.investimento)), com = d3.sum(v, (r) => num(r.comissao)), vend = d3.sum(v, (r) => num(r.gmv_cupom));
       return { ...c, e: e.length, custo, prod: d3.sum(e, (r) => num(r.custo_produto)), com, vend, ped: v.length, ret: div(vend, custo + com) };
     }).filter((r) => r.e || r.ped || r.partnership_status === 'approved').sort((x, y) => y.vend - x.vend || y.custo - x.custo);
     const semCreator = env.filter((r) => !r.creator_id);
@@ -1529,7 +1586,7 @@ const embLinhas = () => {
     const m = new Map();
     for (const r of ped) if (dentro(r.data, a, b)) {
       const o = m.get(r.creator_id) || { pedidos: 0, vendas: 0, comissao: 0, envios: 0, custo_envios: 0 };
-      o.pedidos++; o.vendas += num(r.total); o.comissao += num(r.comissao); m.set(r.creator_id, o);
+      o.pedidos++; o.vendas += num(r.gmv_cupom); o.comissao += num(r.comissao); m.set(r.creator_id, o);
     }
     for (const r of env) if (dentro(r.data, a, b) && m.has(r.creator_id)) { const o = m.get(r.creator_id); o.envios++; o.custo_envios += num(r.investimento); }
     return m;
@@ -1575,7 +1632,7 @@ dash.draw('emb-tabela', (el) => {
 
 dash.draw('emb-regras', (el) => {
   el.replaceChildren();
-  el.append(nd('li', null, 'Entram no ranking os embaixadores com pelo menos um pedido com o próprio cupom no período escolhido no topo da página. Vendas = valor do pedido no Bling.'));
+  el.append(nd('li', null, 'Entram no ranking os embaixadores com pelo menos um pedido com o próprio cupom no período escolhido no topo da página. Vendas = valor dos produtos sem o frete, igual ao painel da Inbazz.'));
   el.append(nd('li', null, 'Nível pela carreira, somando todas as vendas pelo cupom: ' + NIVEIS.map((n, i) => `${n.nome} ${i ? 'a partir de ' + BV.brl0(n.min) : 'na primeira venda'}`).join(' · ') + '.'));
   el.append(nd('li', null, 'Conquistas do período: Top vendas, Melhor retorno, Mais pedidos, Maior ticket, Estreia (primeira venda da carreira no período) e Em alta (vendeu mais que no período anterior).'));
   el.append(nd('li', null, 'Retorno = vendas ÷ (envios no período, pelo CPV + frete, + comissão). Envios ligados ao embaixador pelo nome ou @ do destinatário no Bling.'));
