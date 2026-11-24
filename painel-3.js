@@ -2,8 +2,208 @@
 /* ---------- desenhos ---------- */
 const BV = window.BV;
 
+/* ---------- O que é cada indicador: ⓘ ao lado de cartões, números e colunas ----------
+   Chave = rótulo em minúsculas (até o primeiro " · "). Chaves com "contexto|" valem só naquele
+   desenho ou área (ex.: "pdv|receita", "tab-bonif|produto") e têm prioridade sobre a genérica. */
+const GLOSSARIO = {
+  // vendas
+  'faturamento': 'Soma dos pedidos de venda do Bling no período (PDV, site e venda orgânica), sem cancelados e sem bonificações. Inclui o frete cobrado. A barra compara com a meta do período: meta do mês ÷ dias do mês × dias do período.',
+  'pedidos': 'Quantidade de pedidos de venda no período, sem cancelados e sem bonificações.',
+  'ticket médio': 'Receita ÷ quantidade de pedidos: quanto cada pedido vale, em média.',
+  'receita': 'Soma do valor dos pedidos no período, sem cancelados e sem bonificações.',
+  'clientes': 'Clientes diferentes (pelo cadastro do Bling) com pelo menos um pedido no período.',
+  'clientes que compraram': 'Clientes diferentes (pelo cadastro do Bling) com pelo menos um pedido no período.',
+  'receita por cliente': 'Receita ÷ clientes que compraram: quanto cada cliente comprou, em média, no período.',
+  '% da receita': 'Receita desta linha ÷ receita total da tabela no período.',
+  'último pedido': 'Data do pedido mais recente.',
+  'pdv|receita': 'Soma dos pedidos da loja PDV do Bling no período, sem cancelados e sem bonificações.',
+  'pdv|pedidos': 'Pedidos da loja PDV do Bling no período, sem cancelados.',
+  'organica|receita': 'Soma dos pedidos da loja "Vendas orgânicas" do Bling e dos pedidos sem loja, no período, sem cancelados e sem bonificações.',
+  'organica|pedidos': 'Pedidos da loja "Vendas orgânicas" e pedidos sem loja no período, sem cancelados.',
+  'itens': 'Quantidade de itens nos pedidos, como aparecem no Bling: uma caixa de 12 conta 1.',
+  'unidades': 'Cookies e brownies: caixa ou display de 12 conta 12.',
+  'unidades (cookies e brownies)': 'Cookies e brownies: caixa ou display de 12 conta 12.',
+  'vendas': 'Valor dos itens vendidos no período, sem frete, sem cancelados e sem bonificações.',
+  '% das vendas': 'Vendas desta linha ÷ vendas totais da tabela.',
+
+  // Meta Ads
+  'investimento meta': 'Quanto foi gasto em anúncios no Meta (Facebook e Instagram) no período, pela API do Meta. A barra compara com o orçamento planejado do período.',
+  'investido no meta': 'Quanto foi gasto em anúncios no Meta (Facebook e Instagram) no período, pela API do Meta.',
+  'investido': 'Quanto foi gasto em anúncios no Meta no período, pela API do Meta.',
+  'investimento': 'Quanto foi gasto em anúncios no Meta no período, pela API do Meta.',
+  'receita atribuída pelo meta': 'Valor das compras que o Meta atribui aos anúncios: compras até 7 dias após o clique ou 1 dia após ver o anúncio. Conta todas as vendas que o Meta atribui, mesmo as que usaram cupom de creator.',
+  'receita atribuída': 'Valor das compras que o Meta atribui aos anúncios: até 7 dias após o clique ou 1 dia após ver o anúncio.',
+  'valor (meta)': 'Valor das compras que o Meta atribui a esta linha: até 7 dias após o clique ou 1 dia após ver o anúncio.',
+  'roas': 'Receita atribuída pelo Meta ÷ investido no Meta. 2× quer dizer R$ 2 vendidos para cada R$ 1 investido. A meta é 2×.',
+  'roas meta': 'Receita atribuída pelo Meta ÷ investido no Meta. 2× quer dizer R$ 2 vendidos para cada R$ 1 investido. A meta é 2×.',
+  'compras': 'Compras que o Meta atribui aos anúncios no período.',
+  'compras (meta)': 'Compras que o Meta atribui aos anúncios no período.',
+  'custo por compra': 'Investido no Meta ÷ compras atribuídas. Para bater ROAS 2×, precisa ficar abaixo da metade do ticket médio.',
+  'custo/compra': 'Investido no Meta ÷ compras atribuídas.',
+  'ctr': 'Cliques ÷ impressões: de cada 100 vezes que o anúncio apareceu, quantas viraram clique.',
+  'cpm': 'Custo para mostrar o anúncio 1.000 vezes: investido ÷ impressões × 1.000.',
+  'cpc': 'Investido ÷ cliques: quanto custou cada clique.',
+  'impressões': 'Quantas vezes os anúncios apareceram na tela de alguém.',
+  'cliques': 'Cliques nos anúncios, segundo o Meta.',
+  'ticket médio (meta)': 'Receita atribuída pelo Meta ÷ compras atribuídas.',
+  'plataforma': 'Onde o anúncio apareceu (Facebook, Instagram, Audience Network, Messenger) e em qual posição (feed, stories, reels…).',
+  '% do investido': 'Investido nesta linha ÷ investido total no período.',
+  'campanha': 'Campanha do Meta Ads. Só aparecem as que tiveram gasto no período.',
+
+  // metas
+  'meta': 'Meta de venda da área no mês, da tabela metas_canais do Supabase.',
+  'realizado': 'Quanto a área vendeu no mês até agora, sem cancelados e sem bonificações.',
+  '% da meta': 'Realizado ÷ meta do mês.',
+  'nível': 'Faixa do % da meta: Largada (até 25%), Movimento, Ascensão, Reta final (75–99%), Conquista (100–119%) e Soberania (120% ou mais).',
+  'projeção / fechamento': 'Mês atual: quanto vai fechar se continuar no ritmo de hoje (vendido ÷ dias passados × dias do mês). Meses fechados: quanto fechou.',
+  'falta': 'Meta do mês − realizado até agora.',
+  'cota por dia': 'O que falta ÷ dias que ainda restam no mês: quanto precisa vender por dia para bater a meta.',
+  'ritmo atual por dia': 'Realizado ÷ dias já passados no mês: quanto está vendendo por dia, em média.',
+  'à frente do ritmo': 'Realizado − o que já deveria ter sido vendido até hoje, dividindo a meta igualmente pelos dias do mês.',
+  'atrás do ritmo': 'O que já deveria ter sido vendido até hoje (meta ÷ dias do mês × dias passados) − realizado.',
+  'no ritmo atual fecha em': 'Projeção do mês: ritmo atual por dia × dias do mês, e quanto isso representa da meta.',
+  'fechou em': 'Realizado ÷ meta no mês fechado.',
+  'acima da meta': 'Realizado − meta no mês.',
+  'abaixo da meta': 'Meta − realizado no mês.',
+
+  // setores
+  'pdv': 'Vendas da loja PDV do Bling no mês (pontos de venda).',
+  'pedidos pdv': 'Pedidos da loja PDV do Bling no mês.',
+  'ecommerce': 'Shopify + vendas orgânicas + pedidos sem loja, no mês.',
+  'pedidos ecommerce': 'Pedidos do Shopify, de vendas orgânicas e sem loja, no mês.',
+  'shopify': 'Pedidos do site (loja Shopify do Bling) no mês.',
+  'vendas orgânicas': 'Pedidos da loja "Vendas orgânicas" do Bling e pedidos sem loja, no mês.',
+  'total de vendas': 'PDV + ecommerce no mês, sem cancelados e sem bonificações.',
+
+  // caixa
+  'a receber': 'Contas a receber em aberto no Bling com vencimento nesta janela.',
+  'a pagar': 'Contas a pagar em aberto no Bling com vencimento nesta janela.',
+  'saldo': 'A receber − a pagar.',
+  'em aberto': 'Valor da conta que ainda não foi pago ou recebido.',
+  'linha da dre': 'Em qual linha da DRE esta categoria do Bling entra (tabela dre_mapa do Supabase).',
+  'pagamentos': 'Quantidade de pagamentos (baixas) desta categoria no período.',
+  'valor pago': 'Soma do que foi pago nesta categoria no período, pela data da baixa no Bling.',
+  'entradas no período': 'Tudo o que entrou no banco no período, pela data da baixa no Bling. Inclui aportes e empréstimos de sócios.',
+  'saídas no período': 'Tudo o que saiu do banco no período, pela data da baixa no Bling.',
+  'saldo do período': 'Entradas − saídas no período.',
+
+  // marketing
+  'investimento total': 'Meta Ads (faturas lançadas no Bling) + bonificações (produto + envio) + outros gastos de marketing, no mês de competência.',
+  'bonificações': 'Produtos enviados sem venda (loja Marketing do Bling): unidades × CPV + frete e logística rateados por envio.',
+  'custo por envio a influenciador': 'Custo das bonificações de até 24 unidades ÷ quantidade desses envios no mês.',
+  'custo por envio (influenc.)': 'Custo das bonificações de até 24 unidades ÷ quantidade desses envios no mês.',
+  'meta ads': 'Faturas do Facebook (Meta Ads) lançadas no contas a pagar do Bling no mês. Pode ser diferente do gasto real da API do Meta.',
+  'tab-marketing|envios': 'Quantidade de bonificações enviadas no mês (pedidos da loja Marketing do Bling).',
+  'tab-marketing|unidades': 'Cookies e brownies enviados em bonificações no mês (caixa de 12 conta 12).',
+  'ações de volume': 'Bonificações com mais de 24 unidades (eventos, parcerias, ações em lote). Não contam como envio a influenciador.',
+  'custo ações de volume': 'Custo (produto + envio) das bonificações com mais de 24 unidades.',
+  'resultado meta (informado)': 'Resultado gerado pela performance, lançado à mão na tabela resultado_mensal do Supabase.',
+  'retorno meta': 'Resultado Meta informado ÷ Meta Ads do mês.',
+  'outros': 'Contas a pagar de marketing que não são Meta Ads: conteúdo, influência, branding, eventos, brindes.',
+  'total': 'Meta Ads + bonificações + outros, no mês.',
+  '% do faturamento': 'Investimento total em marketing ÷ faturamento do mês.',
+  'valor de tabela enviado': 'Quanto os produtos bonificados valeriam pelo preço de venda. É referência, não custo.',
+  'valor de tabela': 'Quanto estes produtos valeriam pelo preço de venda. É referência, não custo.',
+  'tab-bonif|produto': 'Unidades × CPV médio dos lotes.',
+  'envio': 'Frete e logística do mês ÷ pedidos enviados no mês (vendas e bonificações), mais embalagem por envio.',
+  'tab-bonif|custo total': 'Produto + envio: quanto este envio custou.',
+
+  // Inbazz e influência
+  'vendas por cupom': 'Pedidos com cupom de creator da Inbazz, sem cancelados, pelo valor líquido informado pela Inbazz.',
+  'pedidos por cupom': 'Pedidos com cupom de creator da Inbazz no mês, sem cancelados.',
+  'vendas da loja': 'Total vendido na loja no mês, segundo a Inbazz.',
+  'comissões': 'Comissões dos creators no mês, lançadas na Inbazz e não canceladas.',
+  'comissão': 'Comissão do creator nos pedidos com o cupom dele, segundo a Inbazz.',
+  'posts': 'Posts do creator capturados pela Inbazz (hoje só stories do Instagram).',
+  'posts (total)': 'Posts do creator capturados pela Inbazz desde o início, não só no período.',
+  'creators postando': 'Creators com pelo menos um post capturado pela Inbazz no mês.',
+  'bonificações a influenciadores': 'Custo (produto + frete) das bonificações de até 24 unidades no mês.',
+  'retorno sobre influência': 'Vendas por cupom ÷ investimento em influência (bonificações a influenciadores + comissões).',
+  'tab-inbazz-mes|investimento': 'Bonificações a influenciadores (produto + frete) + comissões, no mês.',
+  'tab-inbazz-mes|retorno': 'Vendas por cupom ÷ investimento.',
+  'situação': 'Situação da parceria do creator na Inbazz.',
+  'último post': 'Data do post mais recente capturado pela Inbazz.',
+  'tab-inbazz-creators|pedidos': 'Pedidos com o cupom do creator, desde o início, sem cancelados.',
+  'tab-inbazz-creators|vendas': 'Valor dos pedidos com o cupom do creator, desde o início, segundo a Inbazz.',
+  'influencia|influência': 'Receita de influência: vendas do site − receita atribuída pelo Meta (nunca abaixo de zero).',
+  'influencia|por cupom': 'Valor dos produtos nos pedidos com cupom de creator, sem frete e sem cancelados. Igual ao painel da Inbazz.',
+  'influencia|pedidos com cupom': 'Pedidos do site com cupom de creator da Inbazz, sem cancelados.',
+  'influencia|sem cupom': 'Receita de influência − vendas pelo cupom.',
+  'influencia|envios': 'Bonificações de até 24 unidades no período, para creators da Inbazz ou não.',
+  'influencia|investimento': 'Custo de todos os envios a influenciadores (produto pelo CPV + frete) + comissões.',
+  'influencia|retorno': 'Receita de influência ÷ investimento.',
+  'an-tab2|influencia|envios': 'Bonificações de até 24 unidades para este creator no período.',
+  'produto (cpv)': 'Custo de produção do que foi enviado ao creator: unidades × CPV do formato.',
+  'envio total (produto + frete)': 'Produto pelo CPV + frete médio do mês, de todos os envios ao creator no período.',
+  'vendas com cupom': 'Valor dos produtos nos pedidos com o cupom do creator no período, sem frete. Igual à Inbazz.',
+  'an-tab2|influencia|retorno': 'Vendas com cupom ÷ (envio total + comissão) do creator no período.',
+  'conquistas': 'Selos do período: Top vendas, Melhor retorno, Mais pedidos, Maior ticket, Estreia (primeira venda no período) e Em alta (vendeu mais que no período anterior).',
+  'emb-tabela|nível': 'Pelas vendas de toda a carreira: Bronze (até R$ 500), Prata, Ouro (R$ 1.500), Platina (R$ 5.000) e Diamante (R$ 15.000 ou mais).',
+  'emb-tabela|pedidos': 'Pedidos com o cupom do embaixador no período.',
+  'emb-tabela|vendas': 'Valor dos produtos nos pedidos com o cupom, sem frete, no período. Igual à Inbazz.',
+  'emb-tabela|ticket médio': 'Vendas ÷ pedidos do embaixador no período.',
+  'emb-tabela|envios': 'Bonificações enviadas ao embaixador no período.',
+  'emb-tabela|retorno': 'Vendas ÷ (comissão + custo dos envios) do embaixador no período.',
+  'emb-tabela|posts': 'Posts capturados pela Inbazz desde o início.',
+
+  // CPV
+  'cpv e-commerce': 'CPV de fábrica + caixa de envio, por unidade. É o custo de cada cookie ou brownie vendido no site.',
+  'cpv pdv': 'CPV de fábrica + display e 1/4 da caixa master, por unidade. É o custo de cada unidade vendida em ponto de venda.',
+  'cpv de fábrica': 'Insumos pela receita + industrialização + embalagem primária + frete de insumos + formas, por unidade.',
+  'produzidas (lotes 1–2)': 'Unidades deste sabor produzidas nos lotes 1 e 2, pelas NFs da Favo de Mel.',
+  'recheio e cobertura': 'Custo por unidade dos recheios e coberturas: gramas na receita ÷ rendimento × preço por kg.',
+  'outros insumos': 'Custo por unidade dos demais insumos da receita comprados pela Bëlvor: gramas ÷ rendimento × preço por kg.',
+  'industrialização': 'R$ 2,20 por unidade pagos à Favo de Mel pela produção (NF de entrada). Inclui os insumos que a Bëlvor não compra.',
+  'embalagem, frete e formas': 'Embalagem primária + frete dos insumos + formas amortizadas, rateados igualmente por unidade.',
+  'cpv-formatos|produto': 'Unidades do formato × CPV de fábrica.',
+  'embalagem de canal': 'Caixa de envio (e-commerce) ou display + 1/4 da caixa master (PDV).',
+  'cpv-formatos|custo total': 'Produto + embalagem de canal: custo do formato pronto para vender.',
+  'pago': 'Valor pago no contas a pagar do Bling.',
+  'tiragem / qtd. comprada': 'Quantidade comprada nesse pagamento (unidades, kg ou tiragem).',
+  'custo por unidade': 'Pago ÷ quantidade que cobre: quanto este item pesa em cada unidade produzida.',
+  'sobra em estoque': 'Parte do valor pago que ainda está em estoque e vai para os próximos lotes.',
+  'usado nos lotes 1–2': 'Pago − sobra em estoque.',
+  'cpv-tabela|situação': '"Confirmar" quando o valor usa uma estimativa que precisa ser conferida.',
+  'cpv-receita-tab|situação': '"Confirmar" quando preço ou fornecedor ainda precisa ser conferido.',
+  'preço por kg': 'Preço pago por kg, tirado da descrição das contas a pagar (média das compras, quando houve mais de uma).',
+  'sobra informada': 'Quanto ainda está em estoque, informado à mão.',
+  'consumido': 'Pago − sobra informada.',
+  'pela receita (kg)': 'Quanto os lotes 1 e 2 deveriam ter usado, pela receita.',
+  'pela receita (r$)': 'Quantidade pela receita × preço por kg.',
+  'diferença': 'Consumido − pela receita: perda na produção, receita aplicada com mais recheio ou estoque maior do que o informado.',
+  '% do consumido': 'Diferença ÷ consumido.',
+  'cpv-lotes-tab|unidades': 'Unidades produzidas no lote, pela NF da Favo de Mel.',
+};
+const chaveRot = (t) => String(t || '').split(' · ')[0].replace(/[*ⓘ]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+const explicacao = (rot, ctx) => {
+  const k = chaveRot(rot);
+  for (const c of ctx) if (GLOSSARIO[c + '|' + k]) return GLOSSARIO[c + '|' + k];
+  return GLOSSARIO[k] || null;
+};
+const botaoInfo = (txt, nome) => {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'bv-info'; b.textContent = 'ⓘ';
+  b.setAttribute('aria-label', 'O que é ' + nome);
+  const p = document.createElement('span'); p.className = 'bv-info-pop'; p.setAttribute('role', 'tooltip'); p.textContent = txt;
+  b.append(p); return b;
+};
+/* coloca o ⓘ nos rótulos que este desenho acabou de criar */
+const explicar = (el) => {
+  const nome = el.dataset.draw || '', ctx = [];
+  const area = nome.startsWith('an-') ? anArea() : el.dataset.area;
+  if (area) ctx.push(nome + '|' + area);
+  ctx.push(nome);
+  if (area) ctx.push(area);
+  el.querySelectorAll('thead th, .bv-kpi-label, .bv-stat-rot').forEach((lab) => {
+    if (lab.querySelector('.bv-info')) return;
+    const txt = explicacao(lab.textContent, ctx); if (!txt) return;
+    lab.append(document.createTextNode(' '), botaoInfo(txt, lab.textContent.trim()));
+  });
+};
+const desenha = (nome, fn) => dash.draw(nome, (el) => { fn(el); explicar(el); });
+
+
 /* cabeçalho */
-dash.draw('sync', (el) => {
+desenha('sync', (el) => {
   const s = dash.data('sync');
   if (s.status !== 'ok' || !s.data.length) { el.textContent = '—'; return; }
   const r = s.data[0];
@@ -11,14 +211,14 @@ dash.draw('sync', (el) => {
   BV.mark(el, 'sync', 'executado_em', null); el.dataset.row = '0';
   el.textContent = d.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + (r.status === 'ok' ? '' : ' (com avisos)');
 });
-dash.draw('lead-mes', (el) => { el.textContent = BV.mesLongo(BV.mesAtual()); });
+desenha('lead-mes', (el) => { el.textContent = BV.mesLongo(BV.mesAtual()); });
 const linhaMes = (id, mes) => { const s = dash.data(id); return s.status === 'ok' ? s.data.find((r) => r.mes === mes) : null; };
 const janela = (j) => { const s = dash.data('janelas'); return s.status === 'ok' ? s.data.find((r) => r.janela === j) : null; };
-dash.draw('lead-fat', (el) => { const r = linhaMes('setores_mes', BV.mesAtual()); if (dash.data('setores_mes').status !== 'ok') { el.textContent = '—'; return; } BV.mark(el, 'setores_mes', 'total_fat', 'mes=' + BV.mesAtual()); el.textContent = BV.brl0(r ? r.total_fat : 0); });
-dash.draw('lead-ped', (el) => { const r = linhaMes('setores_mes', BV.mesAtual()); if (dash.data('setores_mes').status !== 'ok') { el.textContent = '—'; return; } BV.mark(el, 'setores_mes', 'total_ped', 'mes=' + BV.mesAtual()); el.textContent = BV.int(r ? r.total_ped : 0); });
-dash.draw('lead-res', (el) => { const r = linhaMes('dre_mensal', BV.mesAtual()); if (dash.data('dre_mensal').status !== 'ok') { el.textContent = '—'; return; } BV.mark(el, 'dre_mensal', 'resultado', 'mes=' + BV.mesAtual()); el.textContent = BV.brl0(r ? r.resultado : 0); BV.sinal(el, r ? r.resultado : 0); });
-dash.draw('lead-rec', (el) => { const r = janela('d30'); if (!r) { el.textContent = '—'; return; } BV.mark(el, 'janelas', 'entradas', 'janela=d30'); el.textContent = BV.brl0(r.entradas); });
-dash.draw('lead-pag', (el) => { const r = janela('d30'); if (!r) { el.textContent = '—'; return; } BV.mark(el, 'janelas', 'saidas', 'janela=d30'); el.textContent = BV.brl0(r.saidas); });
+desenha('lead-fat', (el) => { const r = linhaMes('setores_mes', BV.mesAtual()); if (dash.data('setores_mes').status !== 'ok') { el.textContent = '—'; return; } BV.mark(el, 'setores_mes', 'total_fat', 'mes=' + BV.mesAtual()); el.textContent = BV.brl0(r ? r.total_fat : 0); });
+desenha('lead-ped', (el) => { const r = linhaMes('setores_mes', BV.mesAtual()); if (dash.data('setores_mes').status !== 'ok') { el.textContent = '—'; return; } BV.mark(el, 'setores_mes', 'total_ped', 'mes=' + BV.mesAtual()); el.textContent = BV.int(r ? r.total_ped : 0); });
+desenha('lead-res', (el) => { const r = linhaMes('dre_mensal', BV.mesAtual()); if (dash.data('dre_mensal').status !== 'ok') { el.textContent = '—'; return; } BV.mark(el, 'dre_mensal', 'resultado', 'mes=' + BV.mesAtual()); el.textContent = BV.brl0(r ? r.resultado : 0); BV.sinal(el, r ? r.resultado : 0); });
+desenha('lead-rec', (el) => { const r = janela('d30'); if (!r) { el.textContent = '—'; return; } BV.mark(el, 'janelas', 'entradas', 'janela=d30'); el.textContent = BV.brl0(r.entradas); });
+desenha('lead-pag', (el) => { const r = janela('d30'); if (!r) { el.textContent = '—'; return; } BV.mark(el, 'janelas', 'saidas', 'janela=d30'); el.textContent = BV.brl0(r.saidas); });
 
 /* KPIs */
 const subComparacao = (el, id, campo, fmt) => {
@@ -30,44 +230,44 @@ const subComparacao = (el, id, campo, fmt) => {
   const b = document.createElement('span'); BV.mark(b, id, campo, 'mes=' + ant); b.textContent = r ? fmt(r[campo]) : '—';
   el.append(a, b);
 };
-dash.draw('kpi-fat', (el) => {
+desenha('kpi-fat', (el) => {
   if (!BV.status(el, 'setores_mes')) { if (dash.data('setores_mes').status !== 'loading') el.textContent = '—'; return; }
   const r = linhaMes('setores_mes', BV.mesAtual());
   BV.valor(el, 'setores_mes', 'total_fat', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.total_fat : 0));
 });
-dash.draw('kpi-fat-sub', (el) => subComparacao(el, 'setores_mes', 'total_fat', BV.brl0));
-dash.draw('kpi-ticket', (el) => {
+desenha('kpi-fat-sub', (el) => subComparacao(el, 'setores_mes', 'total_fat', BV.brl0));
+desenha('kpi-ticket', (el) => {
   if (!BV.status(el, 'setores_mes')) { if (dash.data('setores_mes').status !== 'loading') el.textContent = '—'; return; }
   const r = linhaMes('setores_mes', BV.mesAtual());
   BV.valor(el, 'setores_mes', 'ticket', 'mes=' + BV.mesAtual(), BV.brl(r ? r.ticket : null));
 });
-dash.draw('kpi-ticket-sub', (el) => subComparacao(el, 'setores_mes', 'ticket', BV.brl));
-dash.draw('kpi-res', (el) => {
+desenha('kpi-ticket-sub', (el) => subComparacao(el, 'setores_mes', 'ticket', BV.brl));
+desenha('kpi-res', (el) => {
   if (!BV.status(el, 'dre_mensal')) { if (dash.data('dre_mensal').status !== 'loading') el.textContent = '—'; return; }
   const r = linhaMes('dre_mensal', BV.mesAtual());
   BV.valor(el, 'dre_mensal', 'resultado', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.resultado : 0));
   BV.sinal(el, r ? r.resultado : 0);
 });
-dash.draw('kpi-res-sub', (el) => subComparacao(el, 'dre_mensal', 'resultado', BV.brl0));
-dash.draw('kpi-30', (el) => {
+desenha('kpi-res-sub', (el) => subComparacao(el, 'dre_mensal', 'resultado', BV.brl0));
+desenha('kpi-30', (el) => {
   if (!BV.status(el, 'janelas')) { if (dash.data('janelas').status !== 'loading') el.textContent = '—'; return; }
   const r = janela('d30');
   BV.valor(el, 'janelas', 'saldo', 'janela=d30', BV.brl0(r.saldo));
   BV.sinal(el, r.saldo);
 });
-dash.draw('kpi-30-sub', (el) => {
+desenha('kpi-30-sub', (el) => {
   el.replaceChildren(); const r = janela('d30'); if (!r) return;
   const a = document.createElement('span'); BV.mark(a, 'janelas', 'entradas', 'janela=d30'); a.textContent = BV.brl0(r.entradas);
   const b = document.createElement('span'); BV.mark(b, 'janelas', 'saidas', 'janela=d30'); b.textContent = BV.brl0(r.saidas);
   el.append(a, document.createTextNode(' a receber · '), b, document.createTextNode(' a pagar'));
 });
-dash.draw('kpi-atraso', (el) => {
+desenha('kpi-atraso', (el) => {
   if (!BV.status(el, 'janelas')) { if (dash.data('janelas').status !== 'loading') el.textContent = '—'; return; }
   const r = janela('atraso');
   BV.valor(el, 'janelas', 'saidas', 'janela=atraso', BV.brl0(r.saidas));
   el.classList.toggle('bv-neg', r.saidas > 0);
 });
-dash.draw('kpi-atraso-sub', (el) => {
+desenha('kpi-atraso-sub', (el) => {
   el.replaceChildren(); const r = janela('atraso'); if (!r) return;
   const a = document.createElement('span'); BV.mark(a, 'janelas', 'n_pagar', 'janela=atraso'); a.textContent = BV.int(r.n_pagar);
   const b = document.createElement('span'); BV.mark(b, 'janelas', 'entradas', 'janela=atraso'); b.textContent = BV.brl0(r.entradas);
@@ -75,7 +275,7 @@ dash.draw('kpi-atraso-sub', (el) => {
 });
 
 /* gráfico mensal */
-dash.draw('chart-mensal', (el) => {
+desenha('chart-mensal', (el) => {
   const s = dash.data('dre_mensal');
   if (s.status !== 'ok') { if (s.status === 'error') BV.fail(el); return; }
   const atual = BV.mesAtual();
@@ -89,12 +289,12 @@ dash.draw('chart-mensal', (el) => {
 });
 
 /* DRE */
-dash.draw('dre-visao-txt', (el) => {
+desenha('dre-visao-txt', (el) => {
   el.textContent = (dash.params().dre_visao || 'competencia') === 'caixa'
     ? 'Visão de caixa: entradas e saídas no mês em que o dinheiro entrou ou saiu. Compras de produção entram quando pagas; não há CMV nem estoque.'
     : 'Visão de competência: receita no mês da venda e despesas no mês a que se referem. Produto vendido entra pelo CMV; compras de produção vão para estoque.';
 });
-dash.draw('dre-table', (el) => {
+desenha('dre-table', (el) => {
   const fonte = (dash.params().dre_visao || 'competencia') === 'caixa' ? 'dre_tabela_caixa' : 'dre_tabela';
   el.dataset.source = fonte;
   const s = dash.data(fonte);
@@ -139,7 +339,7 @@ dash.draw('dre-table', (el) => {
 });
 
 /* Fluxo de caixa: janelas */
-dash.draw('tab-janelas', (el) => {
+desenha('tab-janelas', (el) => {
   const s = dash.data('janelas');
   if (s.status !== 'ok') return;
   el.replaceChildren();
@@ -159,7 +359,7 @@ dash.draw('tab-janelas', (el) => {
 });
 
 /* Fluxo de caixa: previsão diária */
-dash.draw('chart-prev', (el) => {
+desenha('chart-prev', (el) => {
   const s = dash.data('previsao_diaria');
   if (s.status !== 'ok') { if (s.status === 'error') BV.fail(el); return; }
   const saldo = Number(dash.params().saldo) || 0;
@@ -174,7 +374,7 @@ dash.draw('chart-prev', (el) => {
 });
 
 /* Fluxo de caixa: lançamentos em aberto */
-dash.draw('tab-prox', (el) => {
+desenha('tab-prox', (el) => {
   const s = dash.data('caixa');
   if (s.status !== 'ok') return;
   const hoje = BV.hoje();
@@ -209,20 +409,20 @@ dash.draw('tab-prox', (el) => {
 /* Fluxo de caixa: realizado */
 const periodoAtual = () => dash.params().real_periodo || 'mes_atual';
 const realLinha = () => { const s = dash.data('realizado_periodos'); return s.status === 'ok' ? s.data.find((r) => r.periodo === periodoAtual()) : null; };
-dash.draw('real-ent', (el) => { const r = realLinha(); if (!r) { el.textContent = '—'; return; } BV.valor(el, 'realizado_periodos', 'entradas', 'periodo=' + r.periodo, BV.brl0(r.entradas)); });
-dash.draw('real-ent-sub', (el) => {
+desenha('real-ent', (el) => { const r = realLinha(); if (!r) { el.textContent = '—'; return; } BV.valor(el, 'realizado_periodos', 'entradas', 'periodo=' + r.periodo, BV.brl0(r.entradas)); });
+desenha('real-ent-sub', (el) => {
   el.replaceChildren(); const r = realLinha(); if (!r) return;
   const a = document.createElement('span'); BV.mark(a, 'realizado_periodos', 'aportes_socios', 'periodo=' + r.periodo); a.textContent = BV.brl0(r.aportes_socios);
   el.append(a, document.createTextNode(' de aportes e empréstimos de sócios'));
 });
-dash.draw('real-sai', (el) => { const r = realLinha(); if (!r) { el.textContent = '—'; return; } BV.valor(el, 'realizado_periodos', 'saidas', 'periodo=' + r.periodo, BV.brl0(r.saidas)); });
-dash.draw('real-liq', (el) => { const r = realLinha(); if (!r) { el.textContent = '—'; return; } BV.valor(el, 'realizado_periodos', 'saldo', 'periodo=' + r.periodo, BV.brl0(r.saldo)); BV.sinal(el, r.saldo); });
-dash.draw('real-liq-sub', (el) => {
+desenha('real-sai', (el) => { const r = realLinha(); if (!r) { el.textContent = '—'; return; } BV.valor(el, 'realizado_periodos', 'saidas', 'periodo=' + r.periodo, BV.brl0(r.saidas)); });
+desenha('real-liq', (el) => { const r = realLinha(); if (!r) { el.textContent = '—'; return; } BV.valor(el, 'realizado_periodos', 'saldo', 'periodo=' + r.periodo, BV.brl0(r.saldo)); BV.sinal(el, r.saldo); });
+desenha('real-liq-sub', (el) => {
   el.replaceChildren(); const r = realLinha(); if (!r) return;
   const a = document.createElement('span'); BV.mark(a, 'realizado_periodos', 'entradas_operacionais', 'periodo=' + r.periodo); a.textContent = BV.brl0(r.entradas_operacionais);
   el.append(document.createTextNode('Entradas sem aportes: '), a);
 });
-dash.draw('chart-real', (el) => {
+desenha('chart-real', (el) => {
   const s = dash.data('caixa');
   if (s.status !== 'ok') { if (s.status === 'error') BV.fail(el); return; }
   const hoje = BV.hoje(), mesAtual = hoje.slice(0, 7), mesAnt = BV.mesAnterior(mesAtual);
@@ -247,7 +447,7 @@ dash.draw('chart-real', (el) => {
     tipRows: (d) => [['Recebido', BV.brl(d.entradas)], ['Pago', BV.brl(d.saidas)], ['Acumulado no período', BV.brl(d.acumulado)]],
   });
 });
-dash.draw('tab-cat', (el) => {
+desenha('tab-cat', (el) => {
   const s = dash.data('saidas_categoria');
   if (s.status !== 'ok') return;
   const per = periodoAtual();
@@ -304,7 +504,7 @@ const empilhado = (el, dados, chaves, nomes, label) => {
     })
     .on('pointerleave', () => tip.style('display', 'none'));
 };
-dash.draw('chart-setores', (el) => {
+desenha('chart-setores', (el) => {
   const s = dash.data('pedidos_mes');
   if (s.status !== 'ok') { if (s.status === 'error') BV.fail(el); return; }
   const lojas = ['PDV', 'Shopify', 'Vendas orgânicas', 'Sem loja'];
@@ -328,7 +528,7 @@ const tabelaMeses = (el, cols) => {
   }
   el.append(tb);
 };
-dash.draw('tab-setores', (el) => tabelaMeses(el, [
+desenha('tab-setores', (el) => tabelaMeses(el, [
   ['mes', 'Mês'], ['pdv_fat', 'PDV', BV.brl], ['pdv_ped', 'Pedidos PDV', BV.int], ['ecom_fat', 'Ecommerce', BV.brl], ['ecom_ped', 'Pedidos Ecommerce', BV.int],
   ['shopify_fat', 'Shopify', BV.brl], ['organicas_fat', 'Vendas orgânicas', BV.brl], ['total_fat', 'Total de vendas', BV.brl], ['ticket', 'Ticket médio', BV.brl],
 ]));
@@ -348,17 +548,17 @@ const mktSub = (el, campo, fmt) => {
   const a = document.createElement('span'); BV.mark(a, 'marketing_resumo', campo, 'mes=' + ant); a.textContent = r ? fmt(r[campo]) : '—';
   el.append(document.createTextNode(BV.mesCurto(ant) + ' inteiro: '), a);
 };
-dash.draw('mkt-total', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'investimento_total', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.investimento_total : 0)); });
-dash.draw('mkt-total-sub', (el) => mktSub(el, 'investimento_total', BV.brl0));
-dash.draw('mkt-bonif', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'bonificacoes', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.bonificacoes : 0)); });
-dash.draw('mkt-bonif-sub', (el) => {
+desenha('mkt-total', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'investimento_total', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.investimento_total : 0)); });
+desenha('mkt-total-sub', (el) => mktSub(el, 'investimento_total', BV.brl0));
+desenha('mkt-bonif', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'bonificacoes', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.bonificacoes : 0)); });
+desenha('mkt-bonif-sub', (el) => {
   el.replaceChildren(); if (dash.data('marketing_resumo').status !== 'ok') return; const r = mkt(BV.mesAtual()); const w = 'mes=' + BV.mesAtual();
   const a = document.createElement('span'); BV.mark(a, 'marketing_resumo', 'envios', w); a.textContent = BV.int(r ? r.envios : 0);
   const b = document.createElement('span'); BV.mark(b, 'marketing_resumo', 'unidades', w); b.textContent = BV.int(r ? r.unidades : 0);
   el.append(a, document.createTextNode(' envios · '), b, document.createTextNode(' unidades'));
 });
-dash.draw('mkt-envio', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'custo_por_envio', 'mes=' + BV.mesAtual(), BV.brl(r ? r.custo_por_envio : null)); });
-dash.draw('mkt-envio-sub', (el) => {
+desenha('mkt-envio', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'custo_por_envio', 'mes=' + BV.mesAtual(), BV.brl(r ? r.custo_por_envio : null)); });
+desenha('mkt-envio-sub', (el) => {
   el.replaceChildren(); if (dash.data('marketing_resumo').status !== 'ok') return; const r = mkt(BV.mesAtual()); if (!r) return; const w = 'mes=' + BV.mesAtual();
   const a = document.createElement('span'); BV.mark(a, 'marketing_resumo', 'envios_influ', w); a.textContent = BV.int(r.envios_influ);
   el.append(a, document.createTextNode(' envios a influenciadores'));
@@ -368,20 +568,20 @@ dash.draw('mkt-envio-sub', (el) => {
     el.append(document.createTextNode(' · fora da média: '), b, document.createTextNode(r.envios_volume === 1 ? ' ação de volume (' : ' ações de volume ('), c, document.createTextNode(')'));
   }
 });
-dash.draw('mkt-meta', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'meta_ads', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.meta_ads : 0)); });
-dash.draw('mkt-meta-sub', (el) => {
+desenha('mkt-meta', (el) => { if (!mktPronto(el)) return; const r = mkt(BV.mesAtual()); BV.valor(el, 'marketing_resumo', 'meta_ads', 'mes=' + BV.mesAtual(), BV.brl0(r ? r.meta_ads : 0)); });
+desenha('mkt-meta-sub', (el) => {
   el.replaceChildren(); if (dash.data('marketing_resumo').status !== 'ok') return; const r = mkt(BV.mesAtual());
   if (!r || r.roas_meta === null) { el.textContent = 'Retorno: resultado do mês ainda não informado'; return; }
   const a = document.createElement('span'); BV.mark(a, 'marketing_resumo', 'roas_meta', 'mes=' + BV.mesAtual()); a.textContent = BV.dec(r.roas_meta) + '×';
   el.append(document.createTextNode('Retorno: '), a);
 });
-dash.draw('chart-marketing', (el) => {
+desenha('chart-marketing', (el) => {
   const s = dash.data('marketing_resumo');
   if (s.status !== 'ok') { if (s.status === 'error') BV.fail(el); return; }
   const dados = s.data.map((r) => ({ mes: r.mes, bonificacoes: r.bonificacoes, meta_ads: r.meta_ads, outros_marketing: r.outros_marketing }));
   empilhado(el, dados, ['bonificacoes', 'meta_ads', 'outros_marketing'], ['Bonificações', 'Meta Ads', 'Outros'], 'Investimento em marketing por mês: bonificações, Meta Ads e outros');
 });
-dash.draw('tab-marketing', (el) => {
+desenha('tab-marketing', (el) => {
   const s = dash.data('marketing_resumo');
   if (s.status !== 'ok') return;
   const cols = [
@@ -402,14 +602,14 @@ dash.draw('tab-marketing', (el) => {
   }
   el.append(tb);
 });
-dash.draw('bonif-meses', (sel) => {
+desenha('bonif-meses', (sel) => {
   const s = dash.data('bonificacoes');
   const meses = s.status === 'ok' ? [...new Set(s.data.map((r) => r.mes))].sort().reverse() : [];
   sel.replaceChildren(new Option('Todos os meses', 'todos'), ...meses.map((m) => new Option(BV.mesLongo(m), m)));
   sel.value = dash.params().bonif_mes || 'todos';
   if (sel.value === '') sel.value = 'todos';
 });
-dash.draw('tab-bonif', (el) => {
+desenha('tab-bonif', (el) => {
   const s = dash.data('bonificacoes');
   if (s.status !== 'ok') return;
   const mes = dash.params().bonif_mes || 'todos';
@@ -458,7 +658,7 @@ const placarPronto = (el) => {
 };
 const ehAtual = () => mesMetas() === BV.mesAtual();
 
-dash.draw('metas-meses', (sel) => {
+desenha('metas-meses', (sel) => {
   const s = dash.data('placar');
   const meses = s.status === 'ok' ? [...new Set(s.data.filter((r) => r.mes >= '2026-09' && r.mes <= BV.mesAtual()).map((r) => r.mes))].sort().reverse() : [];
   if (!meses.includes(BV.mesAtual())) meses.unshift(BV.mesAtual());
@@ -466,18 +666,18 @@ dash.draw('metas-meses', (sel) => {
   sel.value = mesMetas();
 });
 
-dash.draw('placar-mes', (el) => { el.textContent = BV.mesLongo(mesMetas()); });
-dash.draw('placar-total', (el) => {
+desenha('placar-mes', (el) => { el.textContent = BV.mesLongo(mesMetas()); });
+desenha('placar-total', (el) => {
   if (!placarPronto(el)) return; const r = pl('total');
   el.replaceChildren(); if (!r) { el.textContent = '—'; return; }
   el.append(mk(nd('span', null, BV.brl0(r.realizado)), 'total', 'realizado'));
 });
-dash.draw('placar-meta', (el) => {
+desenha('placar-meta', (el) => {
   el.replaceChildren(); const r = pl('total'); if (!r) return;
   if (r.meta === null) { el.textContent = 'sem meta cadastrada para o mês'; return; }
   el.append(document.createTextNode('de '), mk(nd('span', null, BV.brl0(r.meta)), 'total', 'meta'), document.createTextNode(' · '), mk(nd('b', null, BV.pct(r.pct)), 'total', 'pct'));
 });
-dash.draw('placar-nivel', (el) => { el.replaceChildren(); const b = badge(pl('total')); if (b) el.append(b); });
+desenha('placar-nivel', (el) => { el.replaceChildren(); const b = badge(pl('total')); if (b) el.append(b); });
 
 const trilha = (el, r, opts) => {
   el.replaceChildren();
@@ -503,10 +703,10 @@ const trilha = (el, r, opts) => {
   el.append(track);
   el.setAttribute('aria-label', `${BV.pct(r.pct)} da meta${ehAtual() && r.pct_projecao !== null ? '; no ritmo atual fecha em ' + BV.pct(r.pct_projecao) : ''}`);
 };
-dash.draw('placar-trilha', (el) => trilha(el, pl('total')));
+desenha('placar-trilha', (el) => trilha(el, pl('total')));
 
 const stat = (rot, valor, cls) => { const d = nd('div', 'bv-stat'); d.append(nd('span', 'bv-stat-rot', rot)); const v = nd('span', 'bv-stat-val' + (cls ? ' ' + cls : '')); if (valor instanceof Node) v.append(valor); else v.textContent = valor; d.append(v); return d; };
-dash.draw('placar-stats', (el) => {
+desenha('placar-stats', (el) => {
   el.replaceChildren(); const r = pl('total'); if (!r || r.meta === null) return;
   const w = (campo, txt) => mk(nd('span', null, txt), 'total', campo);
   if (ehAtual()) {
@@ -543,7 +743,7 @@ const anel = (pct, rotulo, sub) => {
 };
 const linha = (...partes) => { const p = nd('p', 'bv-area-linha'); for (const x of partes) p.append(x instanceof Node ? x : document.createTextNode(x)); return p; };
 
-dash.draw('area', (el) => {
+desenha('area', (el) => {
   const area = el.dataset.area;
   el.replaceChildren();
   const st = dash.data('placar').status;
@@ -613,7 +813,7 @@ dash.draw('area', (el) => {
   }
 });
 
-dash.draw('ecom-composicao', (el) => {
+desenha('ecom-composicao', (el) => {
   el.replaceChildren();
   if (dash.data('placar').status !== 'ok') return;
   const eco = pl('ecommerce'), org = pl('organica'), perf = pl('performance'), inf = pl('influencia');
@@ -653,7 +853,7 @@ dash.draw('ecom-composicao', (el) => {
   if (eco.meta) el.append(linha('Ecommerce em ', mk(nd('b', null, BV.pct(eco.pct)), 'ecommerce', 'pct'), ' da meta', ehAtual() && eco.falta > 0 ? ' · faltam ' : '', ehAtual() && eco.falta > 0 ? mk(nd('b', null, BV.brl0(eco.falta)), 'ecommerce', 'falta') : '', ehAtual() && eco.falta > 0 ? ` (${BV.brl0(eco.por_dia)} por dia)` : ''));
 });
 
-dash.draw('ranking', (el) => {
+desenha('ranking', (el) => {
   el.replaceChildren();
   if (dash.data('placar').status !== 'ok') return;
   const itens = ['pdv', 'performance', 'influencia', 'ecommerce'].map(pl).filter((r) => r && r.meta !== null);
@@ -674,7 +874,7 @@ dash.draw('ranking', (el) => {
   });
 });
 
-dash.draw('dias-ritmo', (el) => {
+desenha('dias-ritmo', (el) => {
   el.replaceChildren();
   const s = dash.data('vendas_dia');
   if (s.status !== 'ok' || dash.data('placar').status !== 'ok') return;
@@ -775,11 +975,11 @@ const ritmo = (el, area) => {
     })
     .on('pointerleave', () => tip.style('display', 'none'));
 };
-dash.draw('ritmo-total', (el) => ritmo(el, 'total'));
-dash.draw('ritmo-pdv', (el) => ritmo(el, 'pdv'));
-dash.draw('ritmo-ecommerce', (el) => ritmo(el, 'ecommerce'));
+desenha('ritmo-total', (el) => ritmo(el, 'total'));
+desenha('ritmo-pdv', (el) => ritmo(el, 'pdv'));
+desenha('ritmo-ecommerce', (el) => ritmo(el, 'ecommerce'));
 
-dash.draw('tab-metas', (el) => {
+desenha('tab-metas', (el) => {
   const s = dash.data('placar');
   if (s.status !== 'ok') return;
   const ordem = ['total', 'pdv', 'ecommerce', 'organica', 'performance', 'influencia'];
@@ -809,7 +1009,7 @@ const perPulso = () => dash.params().perf_periodo || 'mes';
 const pulsoLinha = () => { const s = dash.data('pulso'); return s.status === 'ok' ? s.data.find((r) => r.periodo === perPulso()) || null : null; };
 const mkp = (e, campo) => { BV.mark(e, 'pulso', campo, 'periodo=' + perPulso()); return e; };
 
-dash.draw('pulso-periodo-txt', (el) => {
+desenha('pulso-periodo-txt', (el) => {
   const r = pulsoLinha(); if (!r) { el.textContent = ''; return; }
   el.textContent = `${BV.data(r.inicio)} a ${BV.data(r.fim)}, comparado com ${BV.data(r.inicio_ant)} a ${BV.data(r.fim_ant)}.`;
 });
@@ -822,7 +1022,7 @@ const KPIS = {
   roas: { campo: 'roas', fmt: (v) => (v === null ? '—' : BV.dec(v) + '×'), bom: 1 },
   cpa: { campo: 'cpa', fmt: (v) => BV.brl(v), bom: -1 },
 };
-dash.draw('pulso-kpi', (el) => {
+desenha('pulso-kpi', (el) => {
   const k = KPIS[el.dataset.kpi];
   el.replaceChildren();
   const st = dash.data('pulso').status;
@@ -909,23 +1109,23 @@ const serieDoPeriodo = () => {
   if (s.status !== 'ok' || !r) return null;
   return s.data.filter((d) => d.data >= r.inicio && d.data <= r.fim);
 };
-dash.draw('pulso-fat-dia', (el) => {
+desenha('pulso-fat-dia', (el) => {
   const dados = serieDoPeriodo(); if (!dados) { if (dash.data('serie_dia').status === 'error') BV.fail(el); return; }
   barrasDia(el, dados, [{ key: 'pdv', cor: 'var(--bv-pdv)' }, { key: 'site', cor: 'var(--bv-ecom)' }, { key: 'org', cor: 'var(--bv-org)' }],
     { key: 'cota', cor: 'var(--color-fg-muted)', tracejado: true },
     { altura: 260, label: 'Faturamento diário por canal e cota diária da meta', tip: (d) => [['PDV', BV.brl(d.pdv)], ['Site', BV.brl(d.site)], ['Venda orgânica', BV.brl(d.org)], ['Total', BV.brl(d.total)], ['Cota da meta', d.cota === null ? 'sem meta' : BV.brl(d.cota)]] });
 });
-dash.draw('pulso-ped-dia', (el) => {
+desenha('pulso-ped-dia', (el) => {
   const dados = serieDoPeriodo(); if (!dados) return;
   barrasDia(el, dados, [{ key: 'pedidos', cor: 'var(--bv-ecom)' }], null, { altura: 200, inteiro: true, label: 'Pedidos por dia', tip: (d) => [['Pedidos', BV.int(d.pedidos)], ['Faturamento', BV.brl(d.total)]] });
 });
-dash.draw('pulso-meta-dia', (el) => {
+desenha('pulso-meta-dia', (el) => {
   const dados = serieDoPeriodo(); if (!dados) return;
   barrasDia(el, dados, [{ key: 'gasto_meta', cor: 'var(--bv-perf)' }], { key: 'receita_meta', cor: 'var(--color-fg)' },
     { altura: 200, label: 'Investimento e receita atribuída do Meta por dia', tip: (d) => [['Investimento', BV.brl(d.gasto_meta)], ['Receita atribuída', BV.brl(d.receita_meta)], ['ROAS', d.roas === null ? '—' : BV.dec(d.roas) + '×']] });
 });
 
-dash.draw('pulso-composicao', (el) => {
+desenha('pulso-composicao', (el) => {
   el.replaceChildren();
   const r = pulsoLinha(); if (!r) return;
   const perf = Math.min(r.receita_meta || 0, r.site || 0);
@@ -953,7 +1153,7 @@ dash.draw('pulso-composicao', (el) => {
   el.append(g);
 });
 
-dash.draw('pulso-campanhas', (el) => {
+desenha('pulso-campanhas', (el) => {
   const s = dash.data('campanhas_periodo');
   if (s.status !== 'ok') return;
   const rows = s.data.filter((r) => r.periodo === perPulso());
@@ -978,7 +1178,7 @@ dash.draw('pulso-campanhas', (el) => {
   el.append(tb);
 });
 
-dash.draw('pulso-skus', (el) => {
+desenha('pulso-skus', (el) => {
   const s = dash.data('skus_periodo');
   if (s.status !== 'ok') return;
   const rows = s.data.filter((r) => r.periodo === perPulso()).slice(0, 15);
@@ -999,7 +1199,7 @@ dash.draw('pulso-skus', (el) => {
   el.append(tb);
 });
 
-dash.draw('dre-cats', (el) => {
+desenha('dre-cats', (el) => {
   const s = dash.data('dre_categorias');
   if (s.status !== 'ok') { el.textContent = ''; return; }
   const r = s.data.find((x) => x.linha === el.dataset.linha);
@@ -1011,11 +1211,11 @@ dash.draw('dre-cats', (el) => {
 const GRUPOS_CPV = [['insumos', 'Insumos', 'var(--bv-perf)'], ['industrializacao', 'Industrialização', 'var(--bv-pdv)'], ['embalagem_primaria', 'Embalagem primária', 'var(--bv-org)'], ['frete_insumos', 'Frete de insumos', 'var(--bv-ecom)'], ['ferramental', 'Formas (amortizadas)', 'var(--bv-infl)']];
 const cpvLinha = (lote) => { const s = dash.data('cpv_resumo'); return s.status === 'ok' ? s.data.find((r) => r.lote === lote) || null : null; };
 const brl4 = (v) => (v === null || v === undefined ? '—' : 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-dash.draw('cpv-medio', (el) => {
+desenha('cpv-medio', (el) => {
   el.replaceChildren(); const r = cpvLinha('medio'); if (!r) { el.textContent = '—'; return; }
   const s = nd('span', null, brl4(r.unitario)); BV.mark(s, 'cpv_resumo', 'unitario', 'lote=medio'); el.append(s);
 });
-dash.draw('cpv-stats', (el) => {
+desenha('cpv-stats', (el) => {
   el.replaceChildren(); const s = dash.data('cpv_resumo'); if (s.status !== 'ok') return;
   const f = dash.data('cpv_formato');
   if (f.status === 'ok') {
@@ -1031,7 +1231,7 @@ dash.draw('cpv-stats', (el) => {
   }
 
 });
-dash.draw('cpv-barras', (el) => {
+desenha('cpv-barras', (el) => {
   el.replaceChildren(); const s = dash.data('cpv_resumo'); if (s.status !== 'ok') return;
   const max = d3.max(s.data, (r) => r.unitario) || 1;
   for (const r of s.data) {
@@ -1060,7 +1260,7 @@ dash.draw('cpv-barras', (el) => {
     el.append(g);
   }
 });
-dash.draw('cpv-formatos', (el) => {
+desenha('cpv-formatos', (el) => {
   el.replaceChildren(); const s = dash.data('cpv_formatos'); if (s.status !== 'ok' || !s.data) return;
   el.dataset.source = 'cpv_formatos'; el.dataset.rowKey = 'formato';
   const thead = nd('thead'); const hr = nd('tr');
@@ -1076,7 +1276,7 @@ dash.draw('cpv-formatos', (el) => {
   }
   el.append(tb);
 });
-dash.draw('cpv-tabela', (el) => {
+desenha('cpv-tabela', (el) => {
   el.replaceChildren(); const s = dash.data('cpv_comp'); if (s.status !== 'ok') return;
   const nomes = { insumos: 'Insumos', embalagem_primaria: 'Embalagem primária', frete_insumos: 'Frete de insumos', ferramental: 'Formas (amortizar)', embalagem_canal: 'Embalagem de canal' };
   const thead = nd('thead'); const hr = nd('tr');
@@ -1103,7 +1303,7 @@ dash.draw('cpv-tabela', (el) => {
   }
   el.append(tb);
 });
-dash.draw('cpv-lotes-tab', (el) => {
+desenha('cpv-lotes-tab', (el) => {
   el.replaceChildren(); const s = dash.data('lotes_prod'); if (s.status !== 'ok') return;
   const thead = nd('thead'); const hr = nd('tr');
   for (const [f, t, c] of [['lote', 'Lote', 'bv-txt'], ['data', 'Data', 'bv-txt'], ['produto', 'Produto', 'bv-txt'], ['codigo', 'Código', 'bv-txt'], ['unidades', 'Unidades'], ['valor_industrializacao', 'Industrialização']]) { const th = nd('th', c || null, t); th.dataset.field = f; hr.append(th); }
@@ -1127,7 +1327,7 @@ const cabecalho = (el, cols) => {
 };
 const SABORES = [['CBU-UN', 'Bueníssimo'], ['CCP-UN', 'Choco Peanut'], ['BMG-UN', 'Milk Gianduia'], ['BSC-UN', 'Salted Caramel']];
 
-dash.draw('cpv-sku', (el) => {
+desenha('cpv-sku', (el) => {
   el.replaceChildren(); const s = dash.data('cpv_sku'); if (s.status !== 'ok') return;
   const f = dash.data('cpv_formato');
   const emb = (k) => (f.status === 'ok' ? (f.data.find((x) => x.formato === k) || {}).embalagem_canal || 0 : 0);
@@ -1148,7 +1348,7 @@ dash.draw('cpv-sku', (el) => {
   tf.append(fr); el.append(tb, tf);
 });
 
-dash.draw('cpv-receita-tab', (el) => {
+desenha('cpv-receita-tab', (el) => {
   el.replaceChildren(); const s = dash.data('cpv_receita'); if (s.status !== 'ok') return;
   cabecalho(el, [['insumo', 'Insumo', 'bv-txt'], ['fornecedor', 'Fornecedor', 'bv-txt'], ['preco_kg', 'Preço por kg'], ...SABORES.map(([c, n]) => ['g_' + c, n]), ['confirmar', 'Situação', 'bv-txt']]);
   const tb = nd('tbody');
@@ -1178,7 +1378,7 @@ dash.draw('cpv-receita-tab', (el) => {
   tf.append(fr); el.append(tb, tf);
 });
 
-dash.draw('cpv-conc', (el) => {
+desenha('cpv-conc', (el) => {
   el.replaceChildren(); const s = dash.data('cpv_conc'); if (s.status !== 'ok') return;
   cabecalho(el, [['fornecedor', 'Insumos', 'bv-txt'], ['comprado', 'Pago'], ['sobra', 'Sobra informada'], ['consumido', 'Consumido'], ['kg_receita', 'Pela receita (kg)'], ['receita', 'Pela receita (R$)'], ['diferenca', 'Diferença'], ['diferenca_pct', '% do consumido']]);
   const tb = nd('tbody');
@@ -1200,7 +1400,7 @@ const STATUS_CREATOR = { approved: ['na comunidade', 'bv-in'], pending: ['aguard
 const mesNome = (m) => { const [a, n] = String(m).split('-'); return ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][Number(n) - 1] + '/' + a.slice(2); };
 const kpi = (rot, val, sub) => { const d = nd('div', 'bv-kpi'); d.append(nd('span', 'bv-kpi-label', rot), nd('span', 'bv-kpi-val', val)); if (sub) d.append(nd('span', 'bv-kpi-sub', sub)); return d; };
 
-dash.draw('inbazz-kpis', (el) => {
+desenha('inbazz-kpis', (el) => {
   el.replaceChildren(); const s = dash.data('inbazz_mes'); if (s.status !== 'ok' || !s.data.length) return;
   const r = s.data[0];
   el.append(
@@ -1210,7 +1410,7 @@ dash.draw('inbazz-kpis', (el) => {
     kpi('Retorno sobre influência · ' + mesNome(r.mes), r.investimento ? (r.vendas_creators / r.investimento).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + '×' : '—', `investimento ${BV.brl(r.investimento)}`));
 });
 
-dash.draw('tab-inbazz-mes', (el) => {
+desenha('tab-inbazz-mes', (el) => {
   el.replaceChildren(); const s = dash.data('inbazz_mes'); if (s.status !== 'ok') return;
   cabecalho(el, [['mes', 'Mês', 'bv-txt'], ['vendas_loja', 'Vendas da loja'], ['vendas_creators', 'Vendas por cupom'], ['pedidos_creators', 'Pedidos por cupom'], ['posts', 'Posts'], ['creators_postando', 'Creators postando'], ['custo_influ', 'Bonificações a influenciadores'], ['custos', 'Comissões'], ['investimento', 'Investimento'], ['retorno', 'Retorno']]);
   const tb = nd('tbody');
@@ -1224,7 +1424,7 @@ dash.draw('tab-inbazz-mes', (el) => {
   el.append(tb);
 });
 
-dash.draw('tab-inbazz-creators', (el) => {
+desenha('tab-inbazz-creators', (el) => {
   el.replaceChildren(); const s = dash.data('inbazz_creators'); if (s.status !== 'ok') return;
   cabecalho(el, [['nome', 'Creator', 'bv-txt'], ['partnership_status', 'Situação', 'bv-txt'], ['cupons', 'Cupom', 'bv-txt'], ['posts', 'Posts'], ['ultimo_post', 'Último post'], ['pedidos', 'Pedidos'], ['vendas', 'Vendas'], ['comissao', 'Comissão']]);
   const tb = nd('tbody');
@@ -1341,23 +1541,29 @@ const AN_EXPLICA = {
   conversao_envio: ['Conversão dos envios', 'Creators que receberam envio e venderam ÷ creators que receberam envio, no período.'],
   envios_por_venda: ['Envios por venda', 'Envios a creators da Inbazz ÷ pedidos com cupom: quantos envios foram precisos para cada venda.'],
 };
-dash.draw('an-explica', (el) => {
-  el.replaceChildren(); if (anArea() !== 'influencia') return;
-  for (const [, [nome, txt]] of Object.entries(AN_EXPLICA)) { const li = nd('li'); li.append(nd('b', null, nome + ': '), document.createTextNode(txt)); el.append(li); }
+for (const [nome, txt] of Object.values(AN_EXPLICA)) GLOSSARIO['influencia|' + chaveRot(nome)] = txt;
+const AN_LISTA = {
+  pdv: ['Receita', 'Pedidos', 'Ticket médio', 'Clientes que compraram', 'Receita por cliente'],
+  organica: ['Receita', 'Pedidos', 'Ticket médio', 'Clientes que compraram', 'Receita por cliente'],
+  performance: ['Investido no Meta', 'Receita atribuída pelo Meta', 'ROAS', 'Compras (Meta)', 'Custo por compra', 'CTR', 'CPM', 'Ticket médio (Meta)', 'Impressões', 'Cliques', 'CPC'],
+};
+desenha('an-explica', (el) => {
+  el.replaceChildren(); const a = anArea();
+  const itens = a === 'influencia' ? Object.values(AN_EXPLICA) : (AN_LISTA[a] || []).map((n) => [n, explicacao(n, ['an-kpis|' + a, 'an-kpis', a])]);
+  for (const [nome, txt] of itens) { if (!txt) continue; const li = nd('li'); li.append(nd('b', null, nome + ': '), document.createTextNode(txt)); el.append(li); }
 });
-dash.draw('an-titulo', (el) => {
+desenha('an-titulo', (el) => {
   el.replaceChildren(); const a = anArea(), p = anPeriodo();
   el.style.setProperty('--area', AN[a].cor);
   el.append(nd('span', 'bv-eyebrow', 'Análise'), nd('h2', 'bv-h2', `${AN[a].nome} · ${p.rot}`));
   if (p.rotAnt) el.append(nd('span', 'bv-area-sub', 'Comparado com ' + p.rotAnt + '.'));
 });
 
-dash.draw('an-kpis', (el) => {
+desenha('an-kpis', (el) => {
   el.replaceChildren(); if (!anPronto(el)) return;
   const a = anArea(), p = anPeriodo(), m = anMetricas(a, p.ini, p.fim), o = p.pi ? anMetricas(a, p.pi, p.pf) : null;
   const card = (rot, campo, fmt, bom = 1) => {
     const d = nd('div', 'bv-kpi'); const lab = nd('span', 'bv-kpi-label', rot);
-    if (AN_EXPLICA[campo] && a === 'influencia') { d.title = AN_EXPLICA[campo][1]; lab.append(nd('span', 'bv-info', ' ⓘ')); }
     d.append(lab, nd('span', 'bv-kpi-val', fmt(m[campo])));
     if (o && m[campo] !== null && o[campo]) {
       const v = m[campo] / o[campo] - 1; const sub = nd('span', 'bv-kpi-sub', `${v >= 0 ? '+' : ''}${BV.pct(v)} · antes ${fmt(o[campo])}`);
@@ -1413,13 +1619,13 @@ const anTipInfl = (d) => {
   linhas.push(['Investimento', BV.brl(d.investimento)]);
   return linhas;
 };
-dash.draw('an-graf-tit', (el) => { el.textContent = { performance: 'Investido × receita atribuída', influencia: 'Receita de influência e parte que veio por cupom' }[anArea()] || 'Receita por período'; });
-dash.draw('an-graf-leg', (el) => {
+desenha('an-graf-tit', (el) => { el.textContent = { performance: 'Investido × receita atribuída', influencia: 'Receita de influência e parte que veio por cupom' }[anArea()] || 'Receita por período'; });
+desenha('an-graf-leg', (el) => {
   el.replaceChildren(); const a = anArea();
   const itens = a === 'performance' ? [['Receita atribuída', AN[a].cor], ['Investido', 'var(--color-fg-muted)']] : a === 'influencia' ? [['Receita de influência', AN[a].cor], ['Linha: por cupom', null]] : [['Receita', AN[a].cor]];
   for (const [t, c] of itens) { const li = nd('li'); if (c) { const sw = nd('span', 'bv-sw'); sw.style.background = c; li.append(sw); } li.append(document.createTextNode(t)); el.append(li); }
 });
-dash.draw('an-graf', (el) => {
+desenha('an-graf', (el) => {
   if (!anPronto(el)) return;
   const a = anArea(), dados = anSerie(), cor = AN[a].hex;
   const base = { data: dados, x: 'k', height: 260, xfmt: anGrao() === 'mes' ? BV.mesCurto : BV.dataCurta, tipTitle: (d) => rotBalde(d.k), vazio: 'Nada no período.' };
@@ -1431,7 +1637,7 @@ dash.draw('an-graf', (el) => {
     tipRows: (d) => [['Receita', BV.brl(d.receita)], ['Pedidos', BV.int(d.pedidos)], ['Ticket médio', BV.brl(d.ticket)]] });
 });
 
-dash.draw('an-graf2', (el) => {
+desenha('an-graf2', (el) => {
   if (anArea() !== 'performance') { el.replaceChildren(); return; }
   if (!anPronto(el)) return;
   const dados = anSerie().map((d) => ({ ...d, roas: d.roas || 0 }));
@@ -1439,7 +1645,7 @@ dash.draw('an-graf2', (el) => {
     xfmt: anGrao() === 'mes' ? BV.mesCurto : BV.dataCurta, tipTitle: (d) => rotBalde(d.k), tipRows: (d) => [['ROAS', xfmt(d.roas)], ['Receita', BV.brl(d.receita)], ['Investido', BV.brl(d.gasto)]] });
 });
 
-dash.draw('an-tab-per', (el) => {
+desenha('an-tab-per', (el) => {
   el.replaceChildren(); if (!anPronto(el)) return;
   const a = anArea(), dados = anSerie().reverse();
   const cols = a === 'performance'
@@ -1454,7 +1660,7 @@ dash.draw('an-tab-per', (el) => {
 });
 
 
-dash.draw('an-tab-plat', (el) => {
+desenha('an-tab-plat', (el) => {
   el.replaceChildren(); if (anArea() !== 'performance' || !BV.status(el, 'meta_plataforma')) return;
   const p = anPeriodo(), rs = dash.data('meta_plataforma').data.filter((r) => dentro(r.data, p.ini, p.fim));
   const NOMES = { facebook: 'Facebook', instagram: 'Instagram', audience_network: 'Audience Network', messenger: 'Messenger', threads: 'Threads' };
@@ -1473,8 +1679,8 @@ dash.draw('an-tab-plat', (el) => {
   el.append(tb);
 });
 
-dash.draw('an-tab2-tit', (el) => { el.textContent = { performance: 'Campanhas', influencia: 'Creators: envios, comissão e vendas por cupom no período' }[anArea()] || 'Clientes'; });
-dash.draw('an-tab2', (el) => {
+desenha('an-tab2-tit', (el) => { el.textContent = { performance: 'Campanhas', influencia: 'Creators: envios, comissão e vendas por cupom no período' }[anArea()] || 'Clientes'; });
+desenha('an-tab2', (el) => {
   el.replaceChildren(); const a = anArea(), p = anPeriodo();
   const tb = nd('tbody');
   if (a === 'performance') {
@@ -1527,8 +1733,8 @@ dash.draw('an-tab2', (el) => {
   el.append(tb);
 });
 
-dash.draw('an-prod-tit', (el) => { el.textContent = AN[anArea()].itens === 'site' ? 'Produtos vendidos no site (todos os canais do site)' : 'Produtos'; });
-dash.draw('an-tab-prod', (el) => {
+desenha('an-prod-tit', (el) => { el.textContent = AN[anArea()].itens === 'site' ? 'Produtos vendidos no site (todos os canais do site)' : 'Produtos'; });
+desenha('an-tab-prod', (el) => {
   el.replaceChildren(); if (!BV.status(el, 'itens_dia')) return;
   const p = anPeriodo(), rs = dash.data('itens_dia').data.filter((r) => r.canal === AN[anArea()].itens && dentro(r.data, p.ini, p.fim));
   const g = d3.rollups(rs, (v) => ({ un: d3.sum(v, (r) => num(r.unidades)), q: d3.sum(v, (r) => num(r.quantidade)), val: d3.sum(v, (r) => num(r.vendas)) }), (r) => r.descricao).sort((x, y) => y[1].val - x[1].val);
@@ -1539,7 +1745,7 @@ dash.draw('an-tab-prod', (el) => {
   el.append(tb);
 });
 
-dash.draw('an-nota', (el) => {
+desenha('an-nota', (el) => {
   el.textContent = {
     pdv: 'PDV = loja "PDV" do Bling. Clientes = contato do pedido.',
     organica: 'Venda orgânica = loja "Vendas orgânicas" do Bling e pedidos sem loja.',
@@ -1605,7 +1811,7 @@ const embLinhas = () => {
   return ls;
 };
 
-dash.draw('emb-tabela', (el) => {
+desenha('emb-tabela', (el) => {
   el.replaceChildren(); if (anArea() !== 'influencia' || !BV.status(el, 'pedidos_canal', 'envios_creator', 'inbazz_creators')) return;
   const ls = embLinhas();
   cabecalho(el, [['pos', '#', 'bv-txt'], ['nome', 'Embaixador', 'bv-txt'], ['nivel', 'Nível', 'bv-txt'], ['conquistas', 'Conquistas', 'bv-txt'], ['pedidos', 'Pedidos'], ['vendas', 'Vendas'], ['ticket', 'Ticket médio'], ['comissao', 'Comissão'], ['envios', 'Envios'], ['retorno', 'Retorno'], ['posts', 'Posts']]);
@@ -1630,7 +1836,7 @@ dash.draw('emb-tabela', (el) => {
   }
 });
 
-dash.draw('emb-regras', (el) => {
+desenha('emb-regras', (el) => {
   el.replaceChildren();
   el.append(nd('li', null, 'Entram no ranking os embaixadores com pelo menos um pedido com o próprio cupom no período escolhido no topo da página. Vendas = valor dos produtos sem o frete, igual ao painel da Inbazz.'));
   el.append(nd('li', null, 'Nível pela carreira, somando todas as vendas pelo cupom: ' + NIVEIS.map((n, i) => `${n.nome} ${i ? 'a partir de ' + BV.brl0(n.min) : 'na primeira venda'}`).join(' · ') + '.'));

@@ -7,9 +7,9 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Lexend+Peta:wght@400;500&family=Libre+Franklin:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="brand-fonts.css?v=202611231604">
-<link rel="stylesheet" href="painel.css?v=202611231604">
-<link rel="stylesheet" href="site.css?v=202611231604">
+<link rel="stylesheet" href="brand-fonts.css?v=202611241021">
+<link rel="stylesheet" href="painel.css?v=202611241021">
+<link rel="stylesheet" href="site.css?v=202611241021">
 </head>
 <body>
 <header class="topo"><img src="simbolo-branco.png" alt="" class="simbolo"><img src="logo-branco.svg" alt="Bëlvor" class="logo"></header>
@@ -104,12 +104,12 @@
     </div>
 
     <div class="bv-pulso">
-      <div class="bv-pkpi" id="pulso-faturamento"><span class="bv-eyebrow">Faturamento</span><div data-draw="pulso-kpi" data-kpi="fat"></div></div>
-      <div class="bv-pkpi" id="pulso-pedidos"><span class="bv-eyebrow">Pedidos</span><div data-draw="pulso-kpi" data-kpi="pedidos"></div></div>
-      <div class="bv-pkpi" id="pulso-ticket"><span class="bv-eyebrow">Ticket médio</span><div data-draw="pulso-kpi" data-kpi="ticket"></div></div>
-      <div class="bv-pkpi" id="pulso-investimento"><span class="bv-eyebrow">Investimento Meta</span><div data-draw="pulso-kpi" data-kpi="invest"></div></div>
-      <div class="bv-pkpi" id="pulso-roas"><span class="bv-eyebrow">ROAS Meta</span><div data-draw="pulso-kpi" data-kpi="roas"></div></div>
-      <div class="bv-pkpi" id="pulso-cpa"><span class="bv-eyebrow">Custo por compra</span><div data-draw="pulso-kpi" data-kpi="cpa"></div></div>
+      <div class="bv-pkpi" id="pulso-faturamento"><span class="bv-eyebrow">Faturamento <button type="button" class="bv-info" aria-label="O que é Faturamento">ⓘ<span class="bv-info-pop" role="tooltip">Soma dos pedidos de venda do Bling no período (PDV, site e venda orgânica), sem cancelados e sem bonificações. Inclui o frete cobrado. A barra compara com a meta do período: meta do mês ÷ dias do mês × dias do período.</span></button></span><div data-draw="pulso-kpi" data-kpi="fat"></div></div>
+      <div class="bv-pkpi" id="pulso-pedidos"><span class="bv-eyebrow">Pedidos <button type="button" class="bv-info" aria-label="O que é Pedidos">ⓘ<span class="bv-info-pop" role="tooltip">Quantidade de pedidos de venda no período (PDV, site e venda orgânica), sem cancelados e sem bonificações.</span></button></span><div data-draw="pulso-kpi" data-kpi="pedidos"></div></div>
+      <div class="bv-pkpi" id="pulso-ticket"><span class="bv-eyebrow">Ticket médio <button type="button" class="bv-info" aria-label="O que é Ticket médio">ⓘ<span class="bv-info-pop" role="tooltip">Faturamento ÷ pedidos: quanto cada pedido vale, em média.</span></button></span><div data-draw="pulso-kpi" data-kpi="ticket"></div></div>
+      <div class="bv-pkpi" id="pulso-investimento"><span class="bv-eyebrow">Investimento Meta <button type="button" class="bv-info" aria-label="O que é Investimento Meta">ⓘ<span class="bv-info-pop" role="tooltip">Quanto foi gasto em anúncios no Meta (Facebook e Instagram) no período, pela API do Meta. A barra compara com o orçamento planejado do período.</span></button></span><div data-draw="pulso-kpi" data-kpi="invest"></div></div>
+      <div class="bv-pkpi" id="pulso-roas"><span class="bv-eyebrow">ROAS Meta <button type="button" class="bv-info" aria-label="O que é ROAS Meta">ⓘ<span class="bv-info-pop" role="tooltip">Receita atribuída pelo Meta ÷ investimento no Meta. 2× quer dizer R$ 2 vendidos para cada R$ 1 investido. A meta é 2×.</span></button></span><div data-draw="pulso-kpi" data-kpi="roas"></div></div>
+      <div class="bv-pkpi" id="pulso-cpa"><span class="bv-eyebrow">Custo por compra <button type="button" class="bv-info" aria-label="O que é Custo por compra">ⓘ<span class="bv-info-pop" role="tooltip">Investimento no Meta ÷ compras atribuídas pelo Meta. O teto mostra quanto pode custar cada compra para manter ROAS 2×.</span></button></span><div data-draw="pulso-kpi" data-kpi="cpa"></div></div>
     </div>
 
     <div class="bv-card" id="faturamento-diario">
@@ -191,22 +191,22 @@
 
     <div class="bv-areas">
       <article class="bv-area bv-moldura bv-area-link" id="area-pdv" style="--area: var(--bv-pdv)" tabindex="0" role="button" aria-label="Abrir análise de PDV">
-        <header class="bv-area-topo"><span class="bv-eyebrow">PDV</span><span class="bv-area-sub">pontos de venda</span></header>
+        <header class="bv-area-topo"><span class="bv-eyebrow">PDV <span class="bv-info" tabindex="0">ⓘ<span class="bv-info-pop" role="tooltip">Realizado = pedidos da loja PDV do Bling no mês, sem cancelados. Meta da tabela metas_canais.</span></span></span><span class="bv-area-sub">pontos de venda</span></header>
         <div class="bv-area-corpo" data-draw="area" data-area="pdv"></div>
         <span class="bv-area-ver">Ver análise →</span>
       </article>
       <article class="bv-area bv-moldura bv-area-link" id="area-organica" style="--area: var(--bv-org)" tabindex="0" role="button" aria-label="Abrir análise de Venda orgânica">
-        <header class="bv-area-topo"><span class="bv-eyebrow">Venda orgânica</span><span class="bv-area-sub">venda direta, soma no ecommerce</span></header>
+        <header class="bv-area-topo"><span class="bv-eyebrow">Venda orgânica <span class="bv-info" tabindex="0">ⓘ<span class="bv-info-pop" role="tooltip">Realizado = pedidos da loja "Vendas orgânicas" do Bling e pedidos sem loja no mês. Não tem meta própria: soma na meta do ecommerce.</span></span></span><span class="bv-area-sub">venda direta, soma no ecommerce</span></header>
         <div class="bv-area-corpo" data-draw="area" data-area="organica"></div>
         <span class="bv-area-ver">Ver análise →</span>
       </article>
       <article class="bv-area bv-moldura bv-area-link" id="area-performance" style="--area: var(--bv-perf)" tabindex="0" role="button" aria-label="Abrir análise de Performance">
-        <header class="bv-area-topo"><span class="bv-eyebrow">Performance</span><span class="bv-area-sub">Meta Ads · meta = FACE × 2</span></header>
+        <header class="bv-area-topo"><span class="bv-eyebrow">Performance <span class="bv-info" tabindex="0">ⓘ<span class="bv-info-pop" role="tooltip">Realizado = receita atribuída pelo Meta no mês (compras até 7 dias após o clique ou 1 dia após ver o anúncio). Meta = 2 × o investimento no Meta. ROAS real = receita atribuída ÷ investido.</span></span></span><span class="bv-area-sub">Meta Ads · meta = FACE × 2</span></header>
         <div class="bv-area-corpo" data-draw="area" data-area="performance"></div>
         <span class="bv-area-ver">Ver análise →</span>
       </article>
       <article class="bv-area bv-moldura bv-area-link" id="area-influencia" style="--area: var(--bv-infl)" tabindex="0" role="button" aria-label="Abrir análise de MKT influência">
-        <header class="bv-area-topo"><span class="bv-eyebrow">MKT influência</span><span class="bv-area-sub">o restante do site</span></header>
+        <header class="bv-area-topo"><span class="bv-eyebrow">MKT influência <span class="bv-info" tabindex="0">ⓘ<span class="bv-info-pop" role="tooltip">Realizado = vendas do site − receita atribuída pelo Meta. Meta = meta do site − meta de performance.</span></span></span><span class="bv-area-sub">o restante do site</span></header>
         <div class="bv-area-corpo" data-draw="area" data-area="influencia"></div>
         <span class="bv-area-ver">Ver análise →</span>
       </article>
@@ -557,17 +557,17 @@
     </div>
     <div class="bv-kpis" id="realizado-totais">
       <div class="bv-kpi">
-        <span class="bv-kpi-label">Entradas no período</span>
+        <span class="bv-kpi-label">Entradas no período <button type="button" class="bv-info" aria-label="O que é Entradas">ⓘ<span class="bv-info-pop" role="tooltip">Tudo o que entrou no banco no período, pela data da baixa no Bling. Inclui aportes e empréstimos de sócios.</span></button></span>
         <span class="bv-kpi-val" data-draw="real-ent">—</span>
         <span class="bv-kpi-sub" data-draw="real-ent-sub"></span>
       </div>
       <div class="bv-kpi">
-        <span class="bv-kpi-label">Saídas no período</span>
+        <span class="bv-kpi-label">Saídas no período <button type="button" class="bv-info" aria-label="O que é Saídas">ⓘ<span class="bv-info-pop" role="tooltip">Tudo o que saiu do banco no período, pela data da baixa no Bling.</span></button></span>
         <span class="bv-kpi-val" data-draw="real-sai">—</span>
         <span class="bv-kpi-sub"></span>
       </div>
       <div class="bv-kpi">
-        <span class="bv-kpi-label">Saldo do período</span>
+        <span class="bv-kpi-label">Saldo do período <button type="button" class="bv-info" aria-label="O que é Saldo">ⓘ<span class="bv-info-pop" role="tooltip">Entradas − saídas no período.</span></button></span>
         <span class="bv-kpi-val" data-draw="real-liq">—</span>
         <span class="bv-kpi-sub" data-draw="real-liq-sub"></span>
       </div>
@@ -614,22 +614,22 @@
     <h2 class="bv-h2">Investimento em marketing</h2>
     <div class="bv-kpis">
       <div class="bv-kpi" id="kpi-mkt-total">
-        <span class="bv-kpi-label">Investimento total · mês atual</span>
+        <span class="bv-kpi-label">Investimento total · mês atual <button type="button" class="bv-info" aria-label="O que é Investimento">ⓘ<span class="bv-info-pop" role="tooltip">Meta Ads (faturas lançadas no Bling) + bonificações (produto + envio) + outros gastos de marketing, no mês atual.</span></button></span>
         <span class="bv-kpi-val dash-skeleton" data-draw="mkt-total">—</span>
         <span class="bv-kpi-sub" data-draw="mkt-total-sub"></span>
       </div>
       <div class="bv-kpi" id="kpi-mkt-bonif">
-        <span class="bv-kpi-label">Bonificações · mês atual</span>
+        <span class="bv-kpi-label">Bonificações · mês atual <button type="button" class="bv-info" aria-label="O que é Bonificações">ⓘ<span class="bv-info-pop" role="tooltip">Produtos enviados sem venda (loja Marketing do Bling): unidades × CPV + frete e logística rateados por envio.</span></button></span>
         <span class="bv-kpi-val dash-skeleton" data-draw="mkt-bonif">—</span>
         <span class="bv-kpi-sub" data-draw="mkt-bonif-sub"></span>
       </div>
       <div class="bv-kpi" id="kpi-mkt-envio">
-        <span class="bv-kpi-label">Custo por envio a influenciador · mês atual</span>
+        <span class="bv-kpi-label">Custo por envio a influenciador · mês atual <button type="button" class="bv-info" aria-label="O que é Custo">ⓘ<span class="bv-info-pop" role="tooltip">Custo das bonificações de até 24 unidades ÷ quantidade desses envios no mês.</span></button></span>
         <span class="bv-kpi-val dash-skeleton" data-draw="mkt-envio">—</span>
         <span class="bv-kpi-sub" data-draw="mkt-envio-sub"></span>
       </div>
       <div class="bv-kpi" id="kpi-mkt-meta">
-        <span class="bv-kpi-label">Meta Ads · mês atual</span>
+        <span class="bv-kpi-label">Meta Ads · mês atual <button type="button" class="bv-info" aria-label="O que é Meta">ⓘ<span class="bv-info-pop" role="tooltip">Faturas do Facebook (Meta Ads) lançadas no contas a pagar do Bling no mês. Pode ser diferente do gasto real da API do Meta, usado na análise de Performance.</span></button></span>
         <span class="bv-kpi-val dash-skeleton" data-draw="mkt-meta">—</span>
         <span class="bv-kpi-sub" data-draw="mkt-meta-sub"></span>
       </div>
@@ -702,10 +702,10 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="runtime.js?v=202611231604"></script>
-<script src="painel-1.js?v=202611231604"></script>
-<script src="painel-2.js?v=202611231604"></script>
-<script src="painel-3.js?v=202611231604"></script>
-<script src="abas.js?v=202611231604"></script>
+<script src="runtime.js?v=202611241021"></script>
+<script src="painel-1.js?v=202611241021"></script>
+<script src="painel-2.js?v=202611241021"></script>
+<script src="painel-3.js?v=202611241021"></script>
+<script src="abas.js?v=202611241021"></script>
 </body>
 </html>

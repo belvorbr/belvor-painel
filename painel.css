@@ -333,3 +333,8 @@
 .bv-explica summary { cursor: pointer; font-weight: 600; }
 .bv-explica ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; line-height: 1.5; font-size: 13px; color: var(--color-fg-muted); }
 .bv-explica b { color: var(--color-fg); }
+.bv-info-pop { text-transform: none; letter-spacing: normal; }
+thead th .bv-info-pop { left: auto; right: -6px; }
+thead th.bv-txt .bv-info-pop { left: -6px; right: auto; }
+thead th .bv-info, .bv-stat-rot .bv-info, .bv-eyebrow .bv-info, .bv-kpi-label .bv-info { opacity: .6; font-size: 11px; }
+thead th .bv-info:hover, .bv-stat-rot .bv-info:hover, .bv-eyebrow .bv-info:hover, .bv-kpi-label .bv-info:hover { opacity: 1; }
